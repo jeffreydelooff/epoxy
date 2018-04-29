@@ -92,6 +92,4 @@ class NotifyBlocker extends AdapterDataObserver implements ListUpdateCallback {
     adapter.notifyItemRangeChanged(position, count, payload);
     blockChanges();
   }
-
-
 }

@@ -16,12 +16,12 @@ import java.util.concurrent.Executors;
 /**
  * An adaptation of Google's {@link android.support.v7.recyclerview.extensions.AsyncListDiffer}
  * that adds support for payloads in changes.
- *
+ * <p>
  * Also adds support for canceling an in progress diff.
  */
 class AsyncListDifferWithPayload<T> {
-  private final static Executor DIFF_EXECUTOR = Executors.newFixedThreadPool(2);
-  private final static Executor MAIN_THREAD_EXECUTOR = new MainThreadExecutor();
+  private static final Executor DIFF_EXECUTOR = Executors.newFixedThreadPool(2);
+  private static final Executor MAIN_THREAD_EXECUTOR = new MainThreadExecutor();
   private final ListUpdateCallback updateCallback;
   private final ItemCallback<T> diffCallback;
 
@@ -67,9 +67,23 @@ class AsyncListDifferWithPayload<T> {
    * diff to cancel, false otherwise.
    */
   public boolean cancelDiff() {
-    boolean diffInProgress = maxScheduledGeneration > maxFinishedGeneration;
+    boolean diffInProgress = isDiffInProgress();
     maxFinishedGeneration = maxScheduledGeneration;
     return diffInProgress;
+  }
+
+  public boolean  isDiffInProgress() {
+    return maxScheduledGeneration > maxFinishedGeneration;
+  }
+
+  /**
+   * Set the current list without performing any diffing. Cancels any diff in progress.
+   * <p>
+   * This can be used if you notified a change to the adapter manually and need this list to be
+   * synced.
+   */
+  public void forceListOverride(@Nullable List<T> newList) {
+    onRunCompleted(newList, ++maxScheduledGeneration);
   }
 
   /**
@@ -83,7 +97,7 @@ class AsyncListDifferWithPayload<T> {
    * @param newList The new List.
    */
   @SuppressWarnings("WeakerAccess")
-  public void submitList(final List<T> newList) {
+  public void submitList(@Nullable final List<T> newList) {
     if (newList == list) {
       // nothing to do
       return;
@@ -92,19 +106,18 @@ class AsyncListDifferWithPayload<T> {
     // incrementing generation means any currently-running diffs are discarded when they finish
     final int runGeneration = ++maxScheduledGeneration;
 
-    if (newList == null) {
-      //noinspection ConstantConditions
-      updateCallback.onRemoved(0, list.size());
-      list = null;
-      readOnlyList = Collections.emptyList();
+    if (newList == null || newList.isEmpty()) {
+      if (list != null && !list.isEmpty()) {
+        updateCallback.onRemoved(0, list.size());
+      }
+      onRunCompleted(null, runGeneration);
       return;
     }
 
-    if (list == null) {
+    if (list == null || list.isEmpty()) {
       // fast simple first insert
       updateCallback.onInserted(0, newList.size());
-      list = newList;
-      readOnlyList = Collections.unmodifiableList(newList);
+      onRunCompleted(newList, runGeneration);
       return;
     }
 
@@ -119,8 +132,8 @@ class AsyncListDifferWithPayload<T> {
           @Override
           public void run() {
             if (maxScheduledGeneration == runGeneration && runGeneration > maxFinishedGeneration) {
-              latchList(wrappedCallback.newList, result);
-              maxFinishedGeneration = runGeneration;
+              result.dispatchUpdatesTo(updateCallback);
+              onRunCompleted(newList, runGeneration);
             }
           }
         });
@@ -128,10 +141,15 @@ class AsyncListDifferWithPayload<T> {
     });
   }
 
-  private void latchList(@NonNull List<T> newList, @NonNull DiffUtil.DiffResult diffResult) {
-    diffResult.dispatchUpdatesTo(updateCallback);
+  private void onRunCompleted(@Nullable List<T> newList, int runGeneration) {
+    maxFinishedGeneration = runGeneration;
     list = newList;
-    readOnlyList = Collections.unmodifiableList(newList);
+
+    if (newList == null) {
+      readOnlyList = Collections.emptyList();
+    } else {
+      readOnlyList = Collections.unmodifiableList(newList);
+    }
   }
 
   private static class MainThreadExecutor implements Executor {

@@ -1,6 +1,5 @@
 package com.airbnb.epoxy;
 
-import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
@@ -8,7 +7,6 @@ import android.support.v7.util.DiffUtil.ItemCallback;
 import android.support.v7.widget.RecyclerView;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public final class EpoxyControllerAdapter extends BaseEpoxyAdapter {
@@ -147,7 +145,10 @@ public final class EpoxyControllerAdapter extends BaseEpoxyAdapter {
     notifyItemMoved(fromPosition, toPosition);
     notifyBlocker.blockChanges();
 
-    if (differ.cancelDiff()) {
+    boolean interruptedDiff = differ.isDiffInProgress();
+    differ.forceListOverride(updatedList);
+
+    if (interruptedDiff) {
       // The move interrupted a model rebuild/diff that was in progress,
       // so models may be out of date and we should force them to rebuilt
       epoxyController.requestModelBuild();
@@ -168,7 +169,7 @@ public final class EpoxyControllerAdapter extends BaseEpoxyAdapter {
 
         @Override
         public Object getChangePayload(EpoxyModel<?> oldItem, EpoxyModel<?> newItem) {
-          return new DiffPayload(Collections.singletonList(oldItem));
+          return new DiffPayload(oldItem);
         }
       };
 }

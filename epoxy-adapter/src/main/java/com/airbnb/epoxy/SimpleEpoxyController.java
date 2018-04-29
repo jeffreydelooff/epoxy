@@ -10,10 +10,6 @@ public class SimpleEpoxyController extends EpoxyController {
   private List<? extends EpoxyModel<?>> currentModels;
   private boolean insideSetModels;
 
-  public SimpleEpoxyController() {
-    setDebugLoggingEnabled(true);
-  }
-
   /**
    * Set the models to add to this controller. Clears any previous models and adds this new list
    * .
