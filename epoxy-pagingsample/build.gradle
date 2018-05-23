@@ -13,26 +13,30 @@ android {
     versionCode 1
     versionName "1.0"
 
-    testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
   }
 }
 
 
 
 dependencies {
-  compile rootProject.deps.kotlin
+  implementation rootProject.deps.kotlin
 
-  compile "org.jetbrains.anko:anko-coroutines:0.10.4"
-  compile 'android.arch.persistence.room:runtime:1.0.0'
-  kapt 'android.arch.persistence.room:compiler:1.0.0'
+  implementation "org.jetbrains.anko:anko-coroutines:0.10.4"
+  implementation 'androidx.room:room-common:2.0.0-alpha1'
+  implementation 'androidx.room:room-runtime:2.0.0-alpha1'
+  implementation 'androidx.paging:paging-common:2.0.0-alpha1'
+  implementation 'androidx.recyclerview:recyclerview:1.0.0-alpha1'
+  kapt 'androidx.room:room-compiler:2.0.0-alpha1'
 
-  compile project(':epoxy-adapter')
-  compile project(':epoxy-paging')
+  implementation project(':epoxy-adapter')
+  implementation project(':epoxy-paging')
+  implementation project(':epoxy-annotations')
   kapt project(':epoxy-processor')
 
-  implementation 'com.android.support:appcompat-v7:27.1.0'
+  implementation 'androidx.appcompat:appcompat:1.0.0-alpha1'
   testImplementation 'junit:junit:4.12'
-  androidTestImplementation('com.android.support.test.espresso:espresso-core:3.0.1', {
+  androidTestImplementation('androidx.test.espresso:espresso-core:3.1.0-alpha2', {
     exclude group: 'com.android.support', module: 'support-annotations'
   })
 
