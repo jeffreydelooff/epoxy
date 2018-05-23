@@ -1,7 +1,5 @@
 package com.airbnb.epoxy;
 
-import android.support.annotation.Nullable;
-
 import com.airbnb.epoxy.GeneratedModelInfo.AttributeGroup;
 import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.CodeBlock;
@@ -11,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.lang.model.type.TypeMirror;
+
+import androidx.annotation.Nullable;
 
 import static com.airbnb.epoxy.Utils.isViewClickListenerType;
 import static com.airbnb.epoxy.Utils.isViewLongClickListenerType;

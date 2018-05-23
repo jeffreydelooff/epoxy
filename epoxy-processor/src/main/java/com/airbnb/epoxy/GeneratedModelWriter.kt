@@ -1,6 +1,6 @@
 package com.airbnb.epoxy
 
-import android.support.annotation.LayoutRes
+import androidx.annotation.LayoutRes
 import com.airbnb.epoxy.ClassNames.ANDROID_ASYNC_TASK
 import com.airbnb.epoxy.Utils.EPOXY_CONTROLLER_TYPE
 import com.airbnb.epoxy.Utils.EPOXY_VIEW_HOLDER_TYPE
