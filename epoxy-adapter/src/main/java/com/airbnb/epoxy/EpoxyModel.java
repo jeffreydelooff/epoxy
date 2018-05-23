@@ -1,8 +1,5 @@
 package com.airbnb.epoxy;
 
-import android.support.annotation.LayoutRes;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +7,10 @@ import android.view.ViewGroup;
 import com.airbnb.epoxy.EpoxyController.ModelInterceptorCallback;
 
 import java.util.List;
+
+import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 /**
  * Helper to bind data to a view using a builder style. The parameterized type should extend
@@ -73,7 +74,7 @@ public abstract class EpoxyModel<T> {
    * <p>
    * If this returns 0 Epoxy will assign a unique view type for this model at run time.
    *
-   * @see android.support.v7.widget.RecyclerView.Adapter#getItemViewType(int)
+   * @see androidx.recyclerview.widget.RecyclerView.Adapter#getItemViewType(int)
    */
   protected int getViewType() {
     return getLayout();
@@ -576,7 +577,7 @@ public abstract class EpoxyModel<T> {
    * from the RecyclerView.
    *
    * @return True if the View should be recycled, false otherwise
-   * @see EpoxyAdapter#onFailedToRecycleView(android.support.v7.widget.RecyclerView.ViewHolder)
+   * @see EpoxyAdapter#onFailedToRecycleView(androidx.recyclerview.widget.RecyclerView.ViewHolder)
    */
   public boolean onFailedToRecycleView(@NonNull T view) {
     return false;
@@ -585,7 +586,7 @@ public abstract class EpoxyModel<T> {
   /**
    * Called when this model's view is attached to the window.
    *
-   * @see EpoxyAdapter#onViewAttachedToWindow(android.support.v7.widget.RecyclerView.ViewHolder)
+   * @see EpoxyAdapter#onViewAttachedToWindow(androidx.recyclerview.widget.RecyclerView.ViewHolder)
    */
   public void onViewAttachedToWindow(@NonNull T view) {
 
@@ -594,7 +595,7 @@ public abstract class EpoxyModel<T> {
   /**
    * Called when this model's view is detached from the the window.
    *
-   * @see EpoxyAdapter#onViewDetachedFromWindow(android.support.v7.widget.RecyclerView.ViewHolder)
+   * @see EpoxyAdapter#onViewDetachedFromWindow(androidx.recyclerview.widget.RecyclerView.ViewHolder)
    */
   public void onViewDetachedFromWindow(@NonNull T view) {
 

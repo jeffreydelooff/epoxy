@@ -1,8 +1,8 @@
 package com.airbnb.epoxy;
 
-import android.support.annotation.NonNull;
-
 import java.util.List;
+
+import androidx.annotation.NonNull;
 
 /**
  * A version of {@link com.airbnb.epoxy.EpoxyModel} that allows you to use a view holder pattern
