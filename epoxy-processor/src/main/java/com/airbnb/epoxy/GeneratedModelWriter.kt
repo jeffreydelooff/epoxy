@@ -39,7 +39,10 @@ import com.squareup.javapoet.TypeSpec
 import java.io.IOException
 import java.lang.annotation.AnnotationTypeMismatchException
 import java.lang.ref.WeakReference
-import java.util.*
+import java.util.ArrayList
+import java.util.Arrays
+import java.util.BitSet
+import java.util.Objects
 import javax.annotation.processing.Filer
 import javax.lang.model.element.Modifier
 import javax.lang.model.element.Modifier.FINAL
@@ -866,7 +869,7 @@ internal class GeneratedModelWriter(
 
         val bindVariablesMethod = MethodSpec.methodBuilder("setDataBindingVariables")
                 .addAnnotation(Override::class.java)
-                .addParameter(ClassName.get("android.databinding", "ViewDataBinding"), "binding")
+                .addParameter(ClassName.get("androidx.databinding", "ViewDataBinding"), "binding")
                 .addModifiers(Modifier.PROTECTED)
                 .returns(TypeName.VOID)
                 .build()

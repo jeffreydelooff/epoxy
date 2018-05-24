@@ -16,6 +16,8 @@ android {
   dataBinding {
     enabled = true
   }
+
+  defaultConfig.javaCompileOptions.annotationProcessorOptions.includeCompileClasspath = true
 }
 
 dependencies {
