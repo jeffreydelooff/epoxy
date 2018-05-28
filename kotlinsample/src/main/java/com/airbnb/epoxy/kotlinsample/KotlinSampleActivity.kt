@@ -1,9 +1,11 @@
 package com.airbnb.epoxy.kotlinsample
 
-import android.os.*
-import android.support.v7.app.*
-import android.text.*
-import com.airbnb.epoxy.*
+import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
+import androidx.appcompat.app.AppCompatActivity
+import com.airbnb.epoxy.EpoxyController
+import com.airbnb.epoxy.EpoxyRecyclerView
 
 class KotlinSampleActivity : AppCompatActivity() {
 
@@ -42,7 +44,8 @@ fun EpoxyRecyclerView.withModels(buildModelsCallback: EpoxyController.() -> Unit
     })
 }
 
-class OnTextChanged(private val callback: (CharSequence) -> Unit) : TextWatcher {
+class OnTextChanged(private val callback: (CharSequence) -> Unit) : TextWatcher
+{
 
     override fun onTextChanged(
             s: CharSequence,
