@@ -1,7 +1,7 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
 
-  ext.KOTLIN_VERSION = "1.2.21"
+  ext.KOTLIN_VERSION = "1.2.41"
   ext.ANDROID_PLUGIN_VERSION = "3.2.0-alpha15"
 
   repositories {
@@ -9,7 +9,7 @@ buildscript {
     jcenter()
   }
   dependencies {
-    classpath "com.android.tools.build:gradle:3.2.0-alpha15"
+    classpath "com.android.tools.build:gradle:3.2.0-alpha17"
     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$KOTLIN_VERSION"
     classpath 'com.bmuschko:gradle-nexus-plugin:2.3.1'
   }
