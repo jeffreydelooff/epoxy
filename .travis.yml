@@ -4,6 +4,7 @@ android:
   components:
   - tools
   - platform-tools
+  - build-tools-27.0.3
   - android-9
   - extra-google-google_play_services
   - extra-android-m2repository
