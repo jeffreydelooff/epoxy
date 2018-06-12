@@ -9,8 +9,7 @@ import androidx.recyclerview.widget.RecyclerView.AdapterDataObserver;
  * <p>
  * This observer throws upon any changes done outside of diffing.
  */
-class NotifyBlocker extends AdapterDataObserver
-{
+class NotifyBlocker extends AdapterDataObserver {
   private boolean changesAllowed;
 
   void allowChanges() {
