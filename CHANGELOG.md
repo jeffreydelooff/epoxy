@@ -1,3 +1,7 @@
+# WIP 3.0.0 (TBD)
+
+- **Breaking** Migrated to androidx packages
+
 # 2.12.0 (April 18, 2018)
 
 - **Breaking** Several updates to the Paging Library integration were made (https://github.com/airbnb/epoxy/pull/421)
