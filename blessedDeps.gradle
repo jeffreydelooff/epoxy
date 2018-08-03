@@ -15,13 +15,13 @@ rootProject.ext.COMPILE_SDK_VERSION = 28
 rootProject.ext.MIN_SDK_VERSION = 14
 rootProject.ext.MIN_SDK_VERSION_LITHO = 15
 
-rootProject.ext.ANDROIDX_ANNOTATION = "1.0.0-alpha1"
-rootProject.ext.ANDROIDX_RECYCLERVIEW = "1.0.0-alpha1"
-rootProject.ext.ANDROIDX_MATERIAL = "1.0.0-alpha1"
-rootProject.ext.ANDROIDX_APPCOMPAT = "1.0.0-alpha1"
-rootProject.ext.ANDROIDX_CARDVIEW = "1.0.0-alpha1"
-rootProject.ext.ANDROIDX_LEGACY = "1.0.0-alpha1"
-rootProject.ext.ANDROIDX_PAGING = "2.0.0-alpha1"
+rootProject.ext.ANDROIDX_ANNOTATION = "1.0.0-beta01"
+rootProject.ext.ANDROIDX_RECYCLERVIEW = "1.0.0-beta01"
+rootProject.ext.ANDROIDX_MATERIAL = "1.0.0-beta01"
+rootProject.ext.ANDROIDX_APPCOMPAT = "1.0.0-beta01"
+rootProject.ext.ANDROIDX_CARDVIEW = "1.0.0-beta01"
+rootProject.ext.ANDROIDX_LEGACY = "1.0.0-beta01"
+rootProject.ext.ANDROIDX_PAGING = "2.0.0-beta01"
 rootProject.ext.ANDROIDX_DATABINDING_COMPILER = "3.2.0-alpha17"
 rootProject.ext.ANDROIDX_DATABINDING_ADAPTERS = "3.2.0-alpha17"
 rootProject.ext.ANDROIDX_DATABINDING_LIBRARY = "3.2.0-alpha11"
@@ -31,9 +31,9 @@ rootProject.ext.SQUARE_JAVAPOET_VERSION = "1.9.0"
 rootProject.ext.SQUARE_KOTLINPOET_VERSION = "0.5.0"
 
 rootProject.ext.ASSERTJ_VERSION = "1.7.1"
-rootProject.ext.GOOGLE_TESTING_COMPILE_VERSION = "0.13"
+rootProject.ext.GOOGLE_TESTING_COMPILE_VERSION = "0.15"
 rootProject.ext.JUNIT_VERSION = "4.12"
-rootProject.ext.MOCKITO_VERSION = "2.18.3"
+rootProject.ext.MOCKITO_VERSION = "2.21.0"
 rootProject.ext.ROBOLECTRIC_VERSION = "3.8"
 
 rootProject.ext.LOTTIE_VERSION = "2.2.5"
