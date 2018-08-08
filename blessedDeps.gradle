@@ -26,7 +26,7 @@ rootProject.ext.ANDROIDX_DATABINDING_COMPILER = "3.2.0-alpha17"
 rootProject.ext.ANDROIDX_DATABINDING_ADAPTERS = "3.2.0-alpha17"
 rootProject.ext.ANDROIDX_DATABINDING_LIBRARY = "3.2.0-alpha11"
 
-rootProject.ext.BUTTERKNIFE_VERSION = "8.8.1"
+rootProject.ext.BUTTERKNIFE_VERSION = "9.0.0-SNAPSHOT"
 rootProject.ext.SQUARE_JAVAPOET_VERSION = "1.9.0"
 rootProject.ext.SQUARE_KOTLINPOET_VERSION = "0.7.0"
 
