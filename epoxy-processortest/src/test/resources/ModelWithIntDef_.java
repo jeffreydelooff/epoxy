@@ -97,7 +97,7 @@ public class ModelWithIntDef_ extends ModelWithIntDef implements GeneratedModel<
   }
 
   @Override
-  public ModelWithIntDef_ id(@NonNull Number... arg0) {
+  public ModelWithIntDef_ id(@Nullable Number... arg0) {
     super.id(arg0);
     return this;
   }
@@ -109,19 +109,19 @@ public class ModelWithIntDef_ extends ModelWithIntDef implements GeneratedModel<
   }
 
   @Override
-  public ModelWithIntDef_ id(@NonNull CharSequence arg0) {
+  public ModelWithIntDef_ id(@Nullable CharSequence arg0) {
     super.id(arg0);
     return this;
   }
 
   @Override
-  public ModelWithIntDef_ id(@NonNull CharSequence arg0, @NonNull CharSequence... arg1) {
+  public ModelWithIntDef_ id(@Nullable CharSequence arg0, @Nullable CharSequence... arg1) {
     super.id(arg0, arg1);
     return this;
   }
 
   @Override
-  public ModelWithIntDef_ id(@NonNull CharSequence arg0, long arg1) {
+  public ModelWithIntDef_ id(@Nullable CharSequence arg0, long arg1) {
     super.id(arg0, arg1);
     return this;
   }

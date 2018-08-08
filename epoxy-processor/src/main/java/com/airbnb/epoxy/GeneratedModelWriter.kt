@@ -2,6 +2,8 @@ package com.airbnb.epoxy
 
 import androidx.annotation.LayoutRes
 import com.airbnb.epoxy.ClassNames.ANDROID_ASYNC_TASK
+import com.airbnb.epoxy.ClassNames.EPOXY_MODEL_PROPERTIES
+import com.airbnb.epoxy.ClassNames.PARIS_STYLE
 import com.airbnb.epoxy.Utils.EPOXY_CONTROLLER_TYPE
 import com.airbnb.epoxy.Utils.EPOXY_VIEW_HOLDER_TYPE
 import com.airbnb.epoxy.Utils.GENERATED_MODEL_INTERFACE
@@ -55,13 +57,13 @@ import javax.lang.model.util.Elements
 import javax.lang.model.util.Types
 
 internal class GeneratedModelWriter(
-        private val filer: Filer,
-        private val types: Types,
-        private val errorLogger: ErrorLogger,
-        private val resourceProcessor: ResourceProcessor,
-        private val configManager: ConfigManager,
-        private val dataBindingModuleLookup: DataBindingModuleLookup,
-        private val elements: Elements
+    private val filer: Filer,
+    private val types: Types,
+    private val errorLogger: ErrorLogger,
+    private val resourceProcessor: ResourceProcessor,
+    private val configManager: ConfigManager,
+    private val dataBindingModuleLookup: DataBindingModuleLookup,
+    private val elements: Elements
 ) {
 
     val modelInterfaceWriter = ModelBuilderInterfaceWriter(filer, types)
@@ -73,8 +75,8 @@ internal class GeneratedModelWriter(
 
         /** Opportunity to add additional code to the unbind method.  */
         open fun addToUnbindMethod(
-                unbindBuilder: Builder,
-                unbindParamName: String
+            unbindBuilder: Builder,
+            unbindParamName: String
         ) {
 
         }
@@ -83,8 +85,8 @@ internal class GeneratedModelWriter(
          * True true to have the bind method build, false to not add the method to the generated class.
          */
         open fun addToBindMethod(
-                methodBuilder: Builder,
-                boundObjectParam: ParameterSpec
+            methodBuilder: Builder,
+            boundObjectParam: ParameterSpec
         ) {
         }
 
@@ -92,15 +94,15 @@ internal class GeneratedModelWriter(
          * True true to have the bind method build, false to not add the method to the generated class.
          */
         open fun addToBindWithDiffMethod(
-                methodBuilder: Builder,
-                boundObjectParam: ParameterSpec,
-                previousModelParam: ParameterSpec
+            methodBuilder: Builder,
+            boundObjectParam: ParameterSpec,
+            previousModelParam: ParameterSpec
         ) {
         }
 
         open fun addToHandlePostBindMethod(
-                postBindBuilder: Builder,
-                boundObjectParam: ParameterSpec
+            postBindBuilder: Builder,
+            boundObjectParam: ParameterSpec
         ) {
 
         }
@@ -113,8 +115,8 @@ internal class GeneratedModelWriter(
     @Throws(IOException::class)
     @JvmOverloads
     fun generateClassForModel(
-            info: GeneratedModelInfo,
-            builderHooks: BuilderHooks? = null
+        info: GeneratedModelInfo,
+        builderHooks: BuilderHooks? = null
     ) {
         this.builderHooks = builderHooks
         if (!info.shouldGenerateModel) {
@@ -149,6 +151,8 @@ internal class GeneratedModelWriter(
             addMethod(generateHashCode(info))
             addMethod(generateToString(info))
 
+            addFromPropertiesMethodIfNeeded(this, info)
+
             builderHooks?.beforeFinalBuild(this)
 
 
@@ -156,8 +160,8 @@ internal class GeneratedModelWriter(
         }
 
         JavaFile.builder(generatedModelName.packageName(), modelClass)
-                .build()
-                .writeTo(filer)
+            .build()
+            .writeTo(filer)
     }
 
     private fun generateOtherLayoutOptions(info: GeneratedModelInfo): Iterable<MethodSpec> {
@@ -180,7 +184,8 @@ internal class GeneratedModelWriter(
 
             var layoutDescription = ""
             for (namePart in otherLayout.resourceName!!.substring(defaultLayoutNameLength).split(
-                    "_".toRegex()).dropLastWhile { it.isEmpty() }) {
+                "_".toRegex()
+            ).dropLastWhile { it.isEmpty() }) {
                 layoutDescription += Utils.capitalizeFirstLetter(namePart)
             }
 
@@ -198,8 +203,8 @@ internal class GeneratedModelWriter(
 
     private fun getGeneratedModelInterface(info: GeneratedModelInfo): ParameterizedTypeName {
         return ParameterizedTypeName.get(
-                getClassName(GENERATED_MODEL_INTERFACE),
-                info.modelType
+            getClassName(GENERATED_MODEL_INTERFACE),
+            info.modelType
         )
     }
 
@@ -213,23 +218,28 @@ internal class GeneratedModelWriter(
         // This is an optimization to avoid recreating the default style many times, since it is likely
         // often needed at runtime.
         constantFields.add(
-                buildField(ClassNames.PARIS_STYLE, PARIS_DEFAULT_STYLE_CONSTANT_NAME) {
-                    addModifiers(FINAL, PRIVATE, STATIC)
-                    initializer("new \$T().addDefault().build()",
-                                styleBuilderInfo.styleBuilderClass)
-                })
+            buildField(ClassNames.PARIS_STYLE, PARIS_DEFAULT_STYLE_CONSTANT_NAME) {
+                addModifiers(FINAL, PRIVATE, STATIC)
+                initializer(
+                    "new \$T().addDefault().build()",
+                    styleBuilderInfo.styleBuilderClass
+                )
+            })
 
         // We store styles in a weak reference since if a controller uses it
         // once it is likely to be used in other models and when models are rebuilt
         for ((name) in styleBuilderInfo.styles) {
             constantFields.add(
-                    FieldSpec.builder(
-                            ParameterizedTypeName.get(ClassName.get(WeakReference::class.java),
-                                                      ClassNames.PARIS_STYLE),
-                            weakReferenceFieldForStyle(name),
-                            PRIVATE, STATIC
-                    )
-                            .build())
+                FieldSpec.builder(
+                    ParameterizedTypeName.get(
+                        ClassName.get(WeakReference::class.java),
+                        ClassNames.PARIS_STYLE
+                    ),
+                    weakReferenceFieldForStyle(name),
+                    PRIVATE, STATIC
+                )
+                    .build()
+            )
         }
 
         return constantFields
@@ -241,68 +251,80 @@ internal class GeneratedModelWriter(
         // bit set for tracking what attributes were set
         if (shouldUseBitSet(classInfo)) {
             fields.add(
-                    buildField(BitSet::class.className(), ATTRIBUTES_BITSET_FIELD_NAME) {
-                        addModifiers(Modifier.PRIVATE, Modifier.FINAL)
-                        initializer("new \$T(\$L)", BitSet::class.java,
-                                    classInfo.attributeInfo.size)
-                    })
+                buildField(BitSet::class.className(), ATTRIBUTES_BITSET_FIELD_NAME) {
+                    addModifiers(Modifier.PRIVATE, Modifier.FINAL)
+                    initializer(
+                        "new \$T(\$L)", BitSet::class.java,
+                        classInfo.attributeInfo.size
+                    )
+                })
         }
 
         // Add fields for the bind/unbind listeners
         val onBindListenerType = ParameterizedTypeName.get(
-                getClassName(ON_BIND_MODEL_LISTENER_TYPE),
-                classInfo.parameterizedGeneratedName,
-                classInfo.modelType
+            getClassName(ON_BIND_MODEL_LISTENER_TYPE),
+            classInfo.parameterizedGeneratedName,
+            classInfo.modelType
         )
-        fields.add(FieldSpec.builder(onBindListenerType, modelBindListenerFieldName(),
-                                     PRIVATE).build())
+        fields.add(
+            FieldSpec.builder(
+                onBindListenerType, modelBindListenerFieldName(),
+                PRIVATE
+            ).build()
+        )
 
         val onUnbindListenerType = ParameterizedTypeName.get(
-                getClassName(ON_UNBIND_MODEL_LISTENER_TYPE),
-                classInfo.parameterizedGeneratedName,
-                classInfo.modelType
+            getClassName(ON_UNBIND_MODEL_LISTENER_TYPE),
+            classInfo.parameterizedGeneratedName,
+            classInfo.modelType
         )
-        fields.add(FieldSpec.builder(onUnbindListenerType, modelUnbindListenerFieldName(),
-                                     PRIVATE).build())
+        fields.add(
+            FieldSpec.builder(
+                onUnbindListenerType, modelUnbindListenerFieldName(),
+                PRIVATE
+            ).build()
+        )
 
         classInfo.getAttributeInfo()
-                .filter { it.isGenerated }
-                .mapTo(fields) {
-                    buildField(it.typeName, it.fieldName) {
-                        addModifiers(PRIVATE)
-                        addAnnotations(it.getSetterAnnotations())
+            .filter { it.isGenerated }
+            .mapTo(fields) {
+                buildField(it.typeName, it.fieldName) {
+                    addModifiers(PRIVATE)
+                    addAnnotations(it.setterAnnotations)
 
-                        if (shouldUseBitSet(classInfo)) {
-                            addJavadoc("Bitset index: \$L", attributeIndex(classInfo, it))
-                        }
+                    if (shouldUseBitSet(classInfo)) {
+                        addJavadoc("Bitset index: \$L", attributeIndex(classInfo, it))
+                    }
 
-                        if (it.codeToSetDefault.isPresent) {
-                            initializer(it.codeToSetDefault.value())
-                        }
+                    if (it.codeToSetDefault.isPresent) {
+                        initializer(it.codeToSetDefault.value())
                     }
                 }
+            }
 
         return fields
     }
 
     private fun modelUnbindListenerFieldName(): String =
-            "onModelUnboundListener" + GENERATED_FIELD_SUFFIX
+        "onModelUnboundListener$GENERATED_FIELD_SUFFIX"
 
     private fun modelBindListenerFieldName(): String =
-            "onModelBoundListener" + GENERATED_FIELD_SUFFIX
+        "onModelBoundListener$GENERATED_FIELD_SUFFIX"
 
     private fun getModelClickListenerType(classInfo: GeneratedModelInfo): ParameterizedTypeName {
         return ParameterizedTypeName.get(
-                getClassName(MODEL_CLICK_LISTENER_TYPE),
-                classInfo.parameterizedGeneratedName,
-                classInfo.modelType)
+            getClassName(MODEL_CLICK_LISTENER_TYPE),
+            classInfo.parameterizedGeneratedName,
+            classInfo.modelType
+        )
     }
 
     private fun getModelLongClickListenerType(classInfo: GeneratedModelInfo): ParameterizedTypeName {
         return ParameterizedTypeName.get(
-                getClassName(MODEL_LONG_CLICK_LISTENER_TYPE),
-                classInfo.parameterizedGeneratedName,
-                classInfo.modelType)
+            getClassName(MODEL_LONG_CLICK_LISTENER_TYPE),
+            classInfo.parameterizedGeneratedName,
+            classInfo.modelType
+        )
     }
 
     /** Include any constructors that are in the super class.  */
@@ -321,8 +343,8 @@ internal class GeneratedModelWriter(
     }
 
     private fun generateDebugAddToMethodIfNeeded(
-            classBuilder: TypeSpec.Builder,
-            info: GeneratedModelInfo
+        classBuilder: TypeSpec.Builder,
+        info: GeneratedModelInfo
     ) {
         if (!configManager.shouldValidateModelUsage()) {
             return
@@ -337,24 +359,26 @@ internal class GeneratedModelWriter(
 
             // If no group default exists, and no attribute in group is set, throw an exception
             info.attributeGroups
-                    .filter { it.isRequired }
-                    .forEach { attributeGroup ->
+                .filter { it.isRequired }
+                .forEach { attributeGroup ->
 
-                        addCode("if (")
-                        attributeGroup.attributes.forEachIndexed { index, attribute ->
-                            if (index != 0) {
-                                addCode(" && ")
-                            }
-
-                            addCode("!\$L", isAttributeSetCode(info, attribute))
+                    addCode("if (")
+                    attributeGroup.attributes.forEachIndexed { index, attribute ->
+                        if (index != 0) {
+                            addCode(" && ")
                         }
 
-                        addCode(") {\n")
-                        addStatement("\tthrow new \$T(\"A value is required for \$L\")",
-                                     IllegalStateException::class.java,
-                                     attributeGroup.name)
-                        addCode("}\n")
+                        addCode("!\$L", isAttributeSetCode(info, attribute))
                     }
+
+                    addCode(") {\n")
+                    addStatement(
+                        "\tthrow new \$T(\"A value is required for \$L\")",
+                        IllegalStateException::class.java,
+                        attributeGroup.name
+                    )
+                    addCode("}\n")
+                }
 
         }
     }
@@ -381,13 +405,17 @@ internal class GeneratedModelWriter(
             addParameter(ClassNames.ANDROID_VIEW_GROUP, "parent")
             addModifiers(PROTECTED)
             returns(modelInfo.boundObjectTypeName)
-            addStatement("\$T v = new \$T(parent.getContext())", modelInfo.boundObjectTypeName,
-                         modelInfo.boundObjectTypeName)
+            addStatement(
+                "\$T v = new \$T(parent.getContext())", modelInfo.boundObjectTypeName,
+                modelInfo.boundObjectTypeName
+            )
 
             val (layoutWidth, layoutHeight) = getLayoutDimensions(modelInfo)
 
-            addStatement("v.setLayoutParams(new \$T(\$L, \$L))",
-                         ClassNames.ANDROID_MARGIN_LAYOUT_PARAMS, layoutWidth, layoutHeight)
+            addStatement(
+                "v.setLayoutParams(new \$T(\$L, \$L))",
+                ClassNames.ANDROID_MARGIN_LAYOUT_PARAMS, layoutWidth, layoutHeight
+            )
 
             addStatement("return v")
         })
@@ -430,48 +458,60 @@ internal class GeneratedModelWriter(
             methods.add(buildBindWithDiffMethod(modelInfo, boundObjectParam))
         }
 
-        val postBindBuilder = MethodSpec.methodBuilder("handlePostBind")
-                .addModifiers(PUBLIC)
-                .addAnnotation(Override::class.java)
-                .addParameter(boundObjectParam)
-                .addParameter(TypeName.INT, "position")
-                .beginControlFlow("if (\$L != null)", modelBindListenerFieldName())
-                .addStatement("\$L.onModelBound(this, object, position)",
-                              modelBindListenerFieldName())
-                .endControlFlow()
+        val postBind = buildMethod("handlePostBind") {
+            addModifiers(PUBLIC)
+            addAnnotation(Override::class.java)
+            addParameter(boundObjectParam)
+            addParameter(TypeName.INT, "position")
 
-        addHashCodeValidationIfNecessary(postBindBuilder,
-                                         "The model was changed during the bind call.")
+            if (modelInfo.isSuperClassAlsoGenerated) {
+                // If a super class is also generated we need to make sure to call through to these
+                // methods on it as well. This is particularly important for EpoxyModelGroup.
+                addStatement("super.handlePostBind(\$L, position)", boundObjectParam.name)
+            }
 
-        builderHooks?.addToHandlePostBindMethod(postBindBuilder, boundObjectParam)
+            beginControlFlow("if (\$L != null)", modelBindListenerFieldName())
+            addStatement(
+                "\$L.onModelBound(this, object, position)",
+                modelBindListenerFieldName()
+            )
+            endControlFlow()
 
-        methods.add(postBindBuilder
-                            .build())
+            addHashCodeValidationIfNecessary(
+                this,
+                "The model was changed during the bind call."
+            )
+
+            builderHooks?.addToHandlePostBindMethod(this, boundObjectParam)
+        }
+
+        methods.add(postBind)
 
         val onBindListenerType = ParameterizedTypeName.get(
-                getClassName(ON_BIND_MODEL_LISTENER_TYPE),
-                modelInfo.parameterizedGeneratedName,
-                modelInfo.modelType
+            getClassName(ON_BIND_MODEL_LISTENER_TYPE),
+            modelInfo.parameterizedGeneratedName,
+            modelInfo.modelType
         )
         val bindListenerParam = ParameterSpec.builder(onBindListenerType, "listener").build()
 
         val onBind = MethodSpec.methodBuilder("onBind")
-                .addJavadoc(
-                        "Register a listener that will be called when this model is bound to a view.\n"
-                                + "<p>\n"
-                                + "The listener will contribute to this model's hashCode state per the {@link\n"
-                                + "com.airbnb.epoxy.EpoxyAttribute.Option#DoNotHash} rules.\n"
-                                + "<p>\n"
-                                + "You may clear the listener by setting a null value, or by calling "
-                                + "{@link #reset()}")
-                .addModifiers(PUBLIC)
-                .returns(modelInfo.parameterizedGeneratedName)
-                .addParameter(bindListenerParam)
+            .addJavadoc(
+                "Register a listener that will be called when this model is bound to a view.\n"
+                        + "<p>\n"
+                        + "The listener will contribute to this model's hashCode state per the {@link\n"
+                        + "com.airbnb.epoxy.EpoxyAttribute.Option#DoNotHash} rules.\n"
+                        + "<p>\n"
+                        + "You may clear the listener by setting a null value, or by calling "
+                        + "{@link #reset()}"
+            )
+            .addModifiers(PUBLIC)
+            .returns(modelInfo.parameterizedGeneratedName)
+            .addParameter(bindListenerParam)
 
         addOnMutationCall(onBind)
-                .addStatement("this.\$L = listener", modelBindListenerFieldName())
-                .addStatement("return this")
-                .build()
+            .addStatement("this.\$L = listener", modelBindListenerFieldName())
+            .addStatement("return this")
+            .build()
 
         methods.add(onBind.build())
 
@@ -479,45 +519,48 @@ internal class GeneratedModelWriter(
         val unbindObjectParam = ParameterSpec.builder(modelInfo.modelType, unbindParamName).build()
 
         val unbindBuilder = MethodSpec.methodBuilder("unbind")
-                .addAnnotation(Override::class.java)
-                .addModifiers(PUBLIC)
-                .addParameter(unbindObjectParam)
+            .addAnnotation(Override::class.java)
+            .addModifiers(PUBLIC)
+            .addParameter(unbindObjectParam)
 
         unbindBuilder
-                .addStatement("super.unbind(object)")
-                .beginControlFlow("if (\$L != null)", modelUnbindListenerFieldName())
-                .addStatement("\$L.onModelUnbound(this, object)", modelUnbindListenerFieldName())
-                .endControlFlow()
+            .addStatement("super.unbind(object)")
+            .beginControlFlow("if (\$L != null)", modelUnbindListenerFieldName())
+            .addStatement("\$L.onModelUnbound(this, object)", modelUnbindListenerFieldName())
+            .endControlFlow()
 
         builderHooks?.addToUnbindMethod(unbindBuilder, unbindParamName)
 
-        methods.add(unbindBuilder
-                            .build())
+        methods.add(
+            unbindBuilder
+                .build()
+        )
 
         val onUnbindListenerType = ParameterizedTypeName.get(
-                getClassName(ON_UNBIND_MODEL_LISTENER_TYPE),
-                modelInfo.parameterizedGeneratedName,
-                modelInfo.modelType
+            getClassName(ON_UNBIND_MODEL_LISTENER_TYPE),
+            modelInfo.parameterizedGeneratedName,
+            modelInfo.modelType
         )
         val unbindListenerParam = ParameterSpec.builder(onUnbindListenerType, "listener").build()
 
         val onUnbind = MethodSpec.methodBuilder("onUnbind")
-                .addJavadoc(
-                        "Register a listener that will be called when this model is unbound from a "
-                                + "view.\n"
-                                + "<p>\n"
-                                + "The listener will contribute to this model's hashCode state per the {@link\n"
-                                + "com.airbnb.epoxy.EpoxyAttribute.Option#DoNotHash} rules.\n"
-                                + "<p>\n"
-                                + "You may clear the listener by setting a null value, or by calling "
-                                + "{@link #reset()}")
-                .addModifiers(PUBLIC)
-                .returns(modelInfo.parameterizedGeneratedName)
+            .addJavadoc(
+                "Register a listener that will be called when this model is unbound from a "
+                        + "view.\n"
+                        + "<p>\n"
+                        + "The listener will contribute to this model's hashCode state per the {@link\n"
+                        + "com.airbnb.epoxy.EpoxyAttribute.Option#DoNotHash} rules.\n"
+                        + "<p>\n"
+                        + "You may clear the listener by setting a null value, or by calling "
+                        + "{@link #reset()}"
+            )
+            .addModifiers(PUBLIC)
+            .returns(modelInfo.parameterizedGeneratedName)
 
         addOnMutationCall(onUnbind)
-                .addParameter(unbindListenerParam)
-                .addStatement("this.\$L = listener", modelUnbindListenerFieldName())
-                .addStatement("return this")
+            .addParameter(unbindListenerParam)
+            .addStatement("this.\$L = listener", modelUnbindListenerFieldName())
+            .addStatement("return this")
 
         methods.add(onUnbind.build())
 
@@ -525,8 +568,8 @@ internal class GeneratedModelWriter(
     }
 
     private fun buildBindMethod(
-            boundObjectParam: ParameterSpec,
-            modelInfo: GeneratedModelInfo
+        boundObjectParam: ParameterSpec,
+        modelInfo: GeneratedModelInfo
     ) = buildMethod("bind") {
         addAnnotation(Override::class.java)
         addModifiers(PUBLIC)
@@ -542,12 +585,14 @@ internal class GeneratedModelWriter(
     }
 
     private fun buildBindWithDiffMethod(
-            classInfo: GeneratedModelInfo,
-            boundObjectParam: ParameterSpec
+        classInfo: GeneratedModelInfo,
+        boundObjectParam: ParameterSpec
     ) = buildMethod("bind") {
 
-        val previousModelParam = ParameterSpec.builder(getClassName(UNTYPED_EPOXY_MODEL_TYPE),
-                                                       "previousModel").build()
+        val previousModelParam = ParameterSpec.builder(
+            getClassName(UNTYPED_EPOXY_MODEL_TYPE),
+            "previousModel"
+        ).build()
 
         addAnnotation(Override::class.java)
         addModifiers(PUBLIC)
@@ -556,16 +601,18 @@ internal class GeneratedModelWriter(
 
         val generatedModelClass = classInfo.generatedClassName
         beginControlFlow(
-                "if (!(\$L instanceof \$T))",
-                previousModelParam.name,
-                generatedModelClass)
+            "if (!(\$L instanceof \$T))",
+            previousModelParam.name,
+            generatedModelClass
+        )
         addStatement("bind(\$L)", boundObjectParam.name)
         addStatement("return")
         endControlFlow()
         addStatement(
-                "\$T that = (\$T) previousModel",
-                generatedModelClass,
-                generatedModelClass)
+            "\$T that = (\$T) previousModel",
+            generatedModelClass,
+            generatedModelClass
+        )
 
         addBindStyleCodeIfNeeded(classInfo, this, boundObjectParam, true)
 
@@ -577,9 +624,10 @@ internal class GeneratedModelWriter(
         // it's a custom implementation.
         if (modelImplementsBindWithDiff(classInfo.superClassElement, build(), types, elements)) {
             addStatement(
-                    "super.bind(\$L, \$L)",
-                    boundObjectParam.name,
-                    previousModelParam.name)
+                "super.bind(\$L, \$L)",
+                boundObjectParam.name,
+                previousModelParam.name
+            )
         } else {
             addStatement("super.bind(\$L)", boundObjectParam.name)
         }
@@ -588,21 +636,34 @@ internal class GeneratedModelWriter(
     }
 
     private fun buildPreBindMethod(
-            modelInfo: GeneratedModelInfo,
-            viewHolderParam: ParameterSpec,
-            boundObjectParam: ParameterSpec
+        modelInfo: GeneratedModelInfo,
+        viewHolderParam: ParameterSpec,
+        boundObjectParam: ParameterSpec
     ): MethodSpec {
 
         val positionParamName = "position"
         val preBindBuilder = MethodSpec.methodBuilder("handlePreBind")
-                .addModifiers(PUBLIC)
-                .addAnnotation(Override::class.java)
-                .addParameter(viewHolderParam)
-                .addParameter(boundObjectParam)
-                .addParameter(TypeName.INT, positionParamName, Modifier.FINAL)
+            .addModifiers(PUBLIC)
+            .addAnnotation(Override::class.java)
+            .addParameter(viewHolderParam)
+            .addParameter(boundObjectParam)
+            .addParameter(TypeName.INT, positionParamName, Modifier.FINAL)
 
-        addHashCodeValidationIfNecessary(preBindBuilder,
-                                         "The model was changed between being added to the controller and being bound.")
+        if (modelInfo.isSuperClassAlsoGenerated) {
+            // If a super class is also generated we need to make sure to call through to these
+            // methods on it as well. This is particularly important for EpoxyModelGroup.
+            preBindBuilder.addStatement(
+                "super.handlePreBind(\$L, \$L, \$L)",
+                viewHolderParam.name,
+                boundObjectParam.name,
+                positionParamName
+            )
+        }
+
+        addHashCodeValidationIfNecessary(
+            preBindBuilder,
+            "The model was changed between being added to the controller and being bound."
+        )
 
         if (modelInfo.isStyleable && configManager.shouldValidateModelUsage()) {
 
@@ -610,31 +671,37 @@ internal class GeneratedModelWriter(
             // recycling will not work correctly. It is done in the background since it is fairly slow
             // and can noticeably add jank to scrolling in dev
             preBindBuilder
-                    .beginControlFlow(
-                            "if (!\$T.equals(\$L, \$L.getTag(\$T.id.epoxy_saved_view_style)))",
-                            Objects::class.java, PARIS_STYLE_ATTR_NAME, boundObjectParam.name,
-                            ClassNames.EPOXY_R)
-                    .beginControlFlow("\$T.THREAD_POOL_EXECUTOR.execute(new \$T()",
-                                      ANDROID_ASYNC_TASK,
-                                      Runnable::class.java)
-                    .beginControlFlow("public void run()")
-                    .beginControlFlow("try")
-                    .addStatement("\$T.assertSameAttributes(new \$T(\$L), \$L, \$L)",
-                                  ClassNames.PARIS_STYLE_UTILS,
-                                  modelInfo.styleBuilderInfo!!.styleApplierClass,
-                                  boundObjectParam.name, PARIS_STYLE_ATTR_NAME,
-                                  PARIS_DEFAULT_STYLE_CONSTANT_NAME)
-                    .endControlFlow()
-                    .beginControlFlow("catch(\$T e)", AssertionError::class.java)
-                    .addStatement(
-                            "throw new \$T(\"\$L model at position \" + \$L + \" has an invalid style:\\n\\n\" + e" + ".getMessage())",
-                            IllegalStateException::class.java,
-                            modelInfo.generatedClassName.simpleName(),
-                            positionParamName)
-                    .endControlFlow()
-                    .endControlFlow()
-                    .endControlFlow(")")
-                    .endControlFlow()
+                .beginControlFlow(
+                    "if (!\$T.equals(\$L, \$L.getTag(\$T.id.epoxy_saved_view_style)))",
+                    Objects::class.java, PARIS_STYLE_ATTR_NAME, boundObjectParam.name,
+                    ClassNames.EPOXY_R
+                )
+                .beginControlFlow(
+                    "\$T.THREAD_POOL_EXECUTOR.execute(new \$T()",
+                    ANDROID_ASYNC_TASK,
+                    Runnable::class.java
+                )
+                .beginControlFlow("public void run()")
+                .beginControlFlow("try")
+                .addStatement(
+                    "\$T.assertSameAttributes(new \$T(\$L), \$L, \$L)",
+                    ClassNames.PARIS_STYLE_UTILS,
+                    modelInfo.styleBuilderInfo!!.styleApplierClass,
+                    boundObjectParam.name, PARIS_STYLE_ATTR_NAME,
+                    PARIS_DEFAULT_STYLE_CONSTANT_NAME
+                )
+                .endControlFlow()
+                .beginControlFlow("catch(\$T e)", AssertionError::class.java)
+                .addStatement(
+                    "throw new \$T(\"\$L model at position \" + \$L + \" has an invalid style:\\n\\n\" + e" + ".getMessage())",
+                    IllegalStateException::class.java,
+                    modelInfo.generatedClassName.simpleName(),
+                    positionParamName
+                )
+                .endControlFlow()
+                .endControlFlow()
+                .endControlFlow(")")
+                .endControlFlow()
         }
 
         return preBindBuilder.build()
@@ -649,31 +716,38 @@ internal class GeneratedModelWriter(
 
         // setter for style object
         val builder = MethodSpec.methodBuilder(PARIS_STYLE_ATTR_NAME)
-                .addModifiers(PUBLIC)
-                .returns(modelInfo.parameterizedGeneratedName)
-                .addParameter(styleType, PARIS_STYLE_ATTR_NAME)
+            .addModifiers(PUBLIC)
+            .returns(modelInfo.parameterizedGeneratedName)
+            .addParameter(styleType, PARIS_STYLE_ATTR_NAME)
 
         setBitSetIfNeeded(modelInfo, styleBuilderInfo, builder)
         addOnMutationCall(builder)
-                .addStatement(styleBuilderInfo.setterCode(), PARIS_STYLE_ATTR_NAME)
+            .addStatement(styleBuilderInfo.setterCode(), PARIS_STYLE_ATTR_NAME)
 
-        methods.add(builder
-                            .addStatement("return this")
-                            .build())
+        methods.add(
+            builder
+                .addStatement("return this")
+                .build()
+        )
 
         // Lambda for building the style
         val parameterizedBuilderCallbackType = ParameterizedTypeName.get(
-                ClassNames.EPOXY_STYLE_BUILDER_CALLBACK, styleBuilderClass)
+            ClassNames.EPOXY_STYLE_BUILDER_CALLBACK, styleBuilderClass
+        )
 
-        methods.add(MethodSpec.methodBuilder("styleBuilder")
-                            .addModifiers(PUBLIC)
-                            .returns(modelInfo.parameterizedGeneratedName)
-                            .addParameter(parameterizedBuilderCallbackType, "builderCallback")
-                            .addStatement("\$T builder = new \$T()", styleBuilderClass,
-                                          styleBuilderClass)
-                            .addStatement("builderCallback.buildStyle(builder.addDefault())")
-                            .addStatement("return \$L(builder.build())", PARIS_STYLE_ATTR_NAME)
-                            .build())
+        methods.add(
+            MethodSpec.methodBuilder("styleBuilder")
+                .addModifiers(PUBLIC)
+                .returns(modelInfo.parameterizedGeneratedName)
+                .addParameter(parameterizedBuilderCallbackType, "builderCallback")
+                .addStatement(
+                    "\$T builder = new \$T()", styleBuilderClass,
+                    styleBuilderClass
+                )
+                .addStatement("builderCallback.buildStyle(builder.addDefault())")
+                .addStatement("return \$L(builder.build())", PARIS_STYLE_ATTR_NAME)
+                .build()
+        )
 
         // Methods for setting each defined style directly
         for ((name, javadoc) in styleBuilderInfo.styles) {
@@ -689,20 +763,28 @@ internal class GeneratedModelWriter(
                 styleMethodBuilder.addJavadoc(javadoc)
             }
 
-            methods.add(styleMethodBuilder
-                                .addModifiers(PUBLIC)
-                                .returns(modelInfo.parameterizedGeneratedName)
-                                .addStatement("\$T style = \$L != null ? \$L.get() : null",
-                                              ClassNames.PARIS_STYLE,
-                                              fieldName, fieldName)
-                                .beginControlFlow("if (style == null)")
-                                .addStatement("style =  new \$T().add\$L().build()",
-                                              styleBuilderClass, capitalizedStyle)
-                                .addStatement("\$L = new \$T<>(style)", fieldName,
-                                              WeakReference::class.java)
-                                .endControlFlow()
-                                .addStatement("return \$L(style)", PARIS_STYLE_ATTR_NAME)
-                                .build())
+            methods.add(
+                styleMethodBuilder
+                    .addModifiers(PUBLIC)
+                    .returns(modelInfo.parameterizedGeneratedName)
+                    .addStatement(
+                        "\$T style = \$L != null ? \$L.get() : null",
+                        ClassNames.PARIS_STYLE,
+                        fieldName, fieldName
+                    )
+                    .beginControlFlow("if (style == null)")
+                    .addStatement(
+                        "style =  new \$T().add\$L().build()",
+                        styleBuilderClass, capitalizedStyle
+                    )
+                    .addStatement(
+                        "\$L = new \$T<>(style)", fieldName,
+                        WeakReference::class.java
+                    )
+                    .endControlFlow()
+                    .addStatement("return \$L(style)", PARIS_STYLE_ATTR_NAME)
+                    .build()
+            )
         }
 
         return methods
@@ -713,30 +795,36 @@ internal class GeneratedModelWriter(
 
         for (methodInfo in info.getMethodsReturningClassType()) {
             val builder = MethodSpec.methodBuilder(methodInfo.name)
-                    .addModifiers(methodInfo.modifiers)
-                    .addParameters(methodInfo.params)
-                    .addAnnotation(Override::class.java)
-                    .varargs(methodInfo.varargs)
-                    .returns(info.parameterizedGeneratedName)
+                .addModifiers(methodInfo.modifiers)
+                .addParameters(methodInfo.params)
+                .addAnnotation(Override::class.java)
+                .varargs(methodInfo.varargs)
+                .returns(info.parameterizedGeneratedName)
 
             if (info.isProgrammaticView
-                    && "layout" == methodInfo.name
-                    && methodInfo.params.size == 1
-                    && methodInfo.params[0].type === TypeName.INT) {
+                && "layout" == methodInfo.name
+                && methodInfo.params.size == 1
+                && methodInfo.params[0].type === TypeName.INT
+            ) {
 
                 builder
-                        .addStatement(
-                                "throw new \$T(\"Layout resources are unsupported with programmatic views.\")",
-                                UnsupportedOperationException::class.java)
+                    .addStatement(
+                        "throw new \$T(\"Layout resources are unsupported with programmatic views.\")",
+                        UnsupportedOperationException::class.java
+                    )
             } else {
 
-                val statementBuilder = StringBuilder(String.format("super.%s(",
-                                                                   methodInfo.name))
+                val statementBuilder = StringBuilder(
+                    String.format(
+                        "super.%s(",
+                        methodInfo.name
+                    )
+                )
                 generateParams(statementBuilder, methodInfo.params)
 
                 builder
-                        .addStatement(statementBuilder.toString())
-                        .addStatement("return this")
+                    .addStatement(statementBuilder.toString())
+                    .addStatement("return this")
             }
 
             methods.add(builder.build())
@@ -753,12 +841,15 @@ internal class GeneratedModelWriter(
         val methods = ArrayList<MethodSpec>()
 
         if (info.isProgrammaticView) {
-            methods.add(buildDefaultLayoutMethodBase()
-                                .toBuilder()
-                                .addStatement(
-                                        "throw new \$T(\"Layout resources are unsupported for views created programmatically" + ".\")",
-                                        UnsupportedOperationException::class.java)
-                                .build())
+            methods.add(
+                buildDefaultLayoutMethodBase()
+                    .toBuilder()
+                    .addStatement(
+                        "throw new \$T(\"Layout resources are unsupported for views created programmatically" + ".\")",
+                        UnsupportedOperationException::class.java
+                    )
+                    .build()
+            )
         } else {
             addCreateHolderMethodIfNeeded(info, methods)
             addDefaultLayoutMethodIfNeeded(info, methods)
@@ -772,8 +863,8 @@ internal class GeneratedModelWriter(
      * default implementation by getting the class type and creating a new instance of it.
      */
     private fun addCreateHolderMethodIfNeeded(
-            modelClassInfo: GeneratedModelInfo,
-            methods: MutableList<MethodSpec>
+        modelClassInfo: GeneratedModelInfo,
+        methods: MutableList<MethodSpec>
     ) {
 
         val originalClassElement = modelClassInfo.superClassElement
@@ -782,19 +873,20 @@ internal class GeneratedModelWriter(
         }
 
         var createHolderMethod = MethodSpec.methodBuilder(
-                CREATE_NEW_HOLDER_METHOD_NAME)
-                .addAnnotation(Override::class.java)
-                .addModifiers(Modifier.PROTECTED)
-                .build()
+            CREATE_NEW_HOLDER_METHOD_NAME
+        )
+            .addAnnotation(Override::class.java)
+            .addModifiers(Modifier.PROTECTED)
+            .build()
 
         if (implementsMethod(originalClassElement, createHolderMethod, types, elements)) {
             return
         }
 
         createHolderMethod = createHolderMethod.toBuilder()
-                .returns(modelClassInfo.modelType)
-                .addStatement("return new \$T()", modelClassInfo.modelType)
-                .build()
+            .returns(modelClassInfo.modelType)
+            .addStatement("return new \$T()", modelClassInfo.modelType)
+            .build()
 
         methods.add(createHolderMethod)
     }
@@ -804,25 +896,27 @@ internal class GeneratedModelWriter(
      * This relies on a layout res being set in the @EpoxyModelClass annotation.
      */
     private fun addDefaultLayoutMethodIfNeeded(
-            modelInfo: GeneratedModelInfo,
-            methods: MutableList<MethodSpec>
+        modelInfo: GeneratedModelInfo,
+        methods: MutableList<MethodSpec>
     ) {
 
         val layout = getDefaultLayoutResource(modelInfo) ?: return
 
-        methods.add(buildDefaultLayoutMethodBase()
-                            .toBuilder()
-                            .addStatement("return \$L", layout.code)
-                            .build())
+        methods.add(
+            buildDefaultLayoutMethodBase()
+                .toBuilder()
+                .addStatement("return \$L", layout.code)
+                .build()
+        )
     }
 
     private fun buildDefaultLayoutMethodBase(): MethodSpec {
         return MethodSpec.methodBuilder(GET_DEFAULT_LAYOUT_METHOD_NAME)
-                .addAnnotation(Override::class.java)
-                .addAnnotation(LayoutRes::class.java)
-                .addModifiers(Modifier.PROTECTED)
-                .returns(TypeName.INT)
-                .build()
+            .addAnnotation(Override::class.java)
+            .addAnnotation(LayoutRes::class.java)
+            .addModifiers(Modifier.PROTECTED)
+            .returns(TypeName.INT)
+            .build()
     }
 
     private fun getDefaultLayoutResource(modelInfo: GeneratedModelInfo): ResourceValue? {
@@ -845,16 +939,17 @@ internal class GeneratedModelWriter(
         val modelClassWithAnnotation = findSuperClassWithClassAnnotation(superClassElement)
         if (modelClassWithAnnotation == null) {
             errorLogger
-                    .logError(
-                            "Model must use %s annotation if it does not implement %s. (class: %s)",
-                            EpoxyModelClass::class.java,
-                            GET_DEFAULT_LAYOUT_METHOD_NAME,
-                            modelInfo.getSuperClassName())
+                .logError(
+                    "Model must use %s annotation if it does not implement %s. (class: %s)",
+                    EpoxyModelClass::class.java,
+                    GET_DEFAULT_LAYOUT_METHOD_NAME,
+                    modelInfo.getSuperClassName()
+                )
             return null
         }
 
         return resourceProcessor
-                .getLayoutInAnnotation(modelClassWithAnnotation, EpoxyModelClass::class.java)
+            .getLayoutInAnnotation(modelClassWithAnnotation, EpoxyModelClass::class.java)
     }
 
     /**
@@ -875,8 +970,11 @@ internal class GeneratedModelWriter(
                 .build()
 
         // If the base method is already implemented don't bother checking for the payload method
-        if (implementsMethod(info.superClassElement, bindVariablesMethod, types,
-                             elements)) {
+        if (implementsMethod(
+                info.superClassElement, bindVariablesMethod, types,
+                elements
+            )
+        ) {
             return emptyList()
         }
 
@@ -888,41 +986,46 @@ internal class GeneratedModelWriter(
         val baseMethodBuilder = bindVariablesMethod.toBuilder()
 
         val payloadMethodBuilder = bindVariablesMethod
-                .toBuilder()
-                .addParameter(getClassName(UNTYPED_EPOXY_MODEL_TYPE), "previousModel")
-                .beginControlFlow("if (!(previousModel instanceof \$T))", generatedModelClass)
-                .addStatement("setDataBindingVariables(binding)")
-                .addStatement("return")
-                .endControlFlow()
-                .addStatement("\$T that = (\$T) previousModel", generatedModelClass,
-                              generatedModelClass)
+            .toBuilder()
+            .addParameter(getClassName(UNTYPED_EPOXY_MODEL_TYPE), "previousModel")
+            .beginControlFlow("if (!(previousModel instanceof \$T))", generatedModelClass)
+            .addStatement("setDataBindingVariables(binding)")
+            .addStatement("return")
+            .endControlFlow()
+            .addStatement(
+                "\$T that = (\$T) previousModel", generatedModelClass,
+                generatedModelClass
+            )
 
         val brClass = ClassName.get(moduleName, "BR")
         val validateAttributes = configManager.shouldValidateModelUsage()
         for (attribute in info.getAttributeInfo()) {
-            val attrName = attribute.getFieldName()
-            val setVariableBlock = CodeBlock.of("binding.setVariable(\$T.\$L, \$L)", brClass,
-                                                attrName, attribute.getterCode())
+            val attrName = attribute.fieldName
+            val setVariableBlock = CodeBlock.of(
+                "binding.setVariable(\$T.\$L, \$L)", brClass,
+                attrName, attribute.getterCode()
+            )
 
             if (validateAttributes) {
                 // The setVariable method returns false if the variable id was not found in the layout.
                 // We can warn the user about this if they have model validations turned on, otherwise
                 // it fails silently.
                 baseMethodBuilder
-                        .beginControlFlow("if (!\$L)", setVariableBlock)
-                        .addStatement(
-                                "throw new \$T(\"The attribute \$L was defined in your data binding model (\$L) but " + "a data variable of that name was not found in the layout.\")",
-                                IllegalStateException::class.java, attrName,
-                                info.getSuperClassName())
-                        .endControlFlow()
+                    .beginControlFlow("if (!\$L)", setVariableBlock)
+                    .addStatement(
+                        "throw new \$T(\"The attribute \$L was defined in your data binding model (\$L) but " + "a data variable of that name was not found in the layout.\")",
+                        IllegalStateException::class.java, attrName,
+                        info.getSuperClassName()
+                    )
+                    .endControlFlow()
             } else {
                 baseMethodBuilder.addStatement("\$L", setVariableBlock)
             }
 
             // Handle binding variables only if they changed
             startNotEqualsControlFlow(payloadMethodBuilder, attribute)
-                    .addStatement("\$L", setVariableBlock)
-                    .endControlFlow()
+                .addStatement("\$L", setVariableBlock)
+                .endControlFlow()
         }
 
         val methods = ArrayList<MethodSpec>()
@@ -940,7 +1043,8 @@ internal class GeneratedModelWriter(
         }
 
         val annotation = classElement.getAnnotation(
-                EpoxyModelClass::class.java)
+            EpoxyModelClass::class.java
+        )
                 ?: // This is an error. The model must have an EpoxyModelClass annotation
                 // since getDefaultLayout is not implemented
                 return null
@@ -949,11 +1053,13 @@ internal class GeneratedModelWriter(
         try {
             layoutRes = annotation.layout
         } catch (e: AnnotationTypeMismatchException) {
-            errorLogger.logError("Invalid layout value in %s annotation. (class: %s). %s: %s",
-                                 EpoxyModelClass::class.java,
-                                 classElement.simpleName,
-                                 e.javaClass.simpleName,
-                                 e.message ?: "")
+            errorLogger.logError(
+                "Invalid layout value in %s annotation. (class: %s). %s: %s",
+                EpoxyModelClass::class.java,
+                classElement.simpleName,
+                e.javaClass.simpleName,
+                e.message ?: ""
+            )
             return null
         }
 
@@ -971,17 +1077,18 @@ internal class GeneratedModelWriter(
         }
 
         errorLogger
-                .logError(
-                        "Model must specify a valid layout resource in the %s annotation. (class: %s)",
-                        EpoxyModelClass::class.java.simpleName,
-                        classElement.simpleName)
+            .logError(
+                "Model must specify a valid layout resource in the %s annotation. (class: %s)",
+                EpoxyModelClass::class.java.simpleName,
+                classElement.simpleName
+            )
 
         return null
     }
 
     private fun generateParams(
-            statementBuilder: StringBuilder,
-            params: List<ParameterSpec>
+        statementBuilder: StringBuilder,
+        params: List<ParameterSpec>
     ) {
         var first = true
         for (param in params) {
@@ -1001,15 +1108,15 @@ internal class GeneratedModelWriter(
             if (attr is ViewAttributeInfo && attr.generateStringOverloads) {
                 methods.addAll(StringOverloadWriter(modelInfo, attr, configManager).buildMethods())
             } else {
-                if (attr.isViewClickListener) {
+                if (attr.isViewClickListener || attr.isViewLongClickListener) {
                     methods.add(generateSetClickModelListener(modelInfo, attr))
                 }
 
-                if (attr.generateSetter() && !attr.hasFinalModifier()) {
+                if (attr.generateSetter && !attr.hasFinalModifier) {
                     methods.add(generateSetter(modelInfo, attr))
                 }
 
-                if (attr.generateGetter()) {
+                if (attr.generateGetter) {
                     methods.add(generateGetter(attr))
                 }
             }
@@ -1019,42 +1126,45 @@ internal class GeneratedModelWriter(
     }
 
     private fun generateSetClickModelListener(
-            classInfo: GeneratedModelInfo,
-            attribute: AttributeInfo
+        classInfo: GeneratedModelInfo,
+        attribute: AttributeInfo
     ): MethodSpec {
         val attributeName = attribute.generatedSetterName()
 
-        val clickListenerType = if (isViewLongClickListenerType(attribute.getTypeMirror()))
+        val clickListenerType = if (isViewLongClickListenerType(attribute.typeMirror))
             getModelLongClickListenerType(classInfo)
         else
             getModelClickListenerType(classInfo)
 
-        val param = ParameterSpec.builder(clickListenerType, attributeName, FINAL).build()
+        val param = ParameterSpec.builder(clickListenerType, attributeName, FINAL)
+            .addAnnotations(attribute.setterAnnotations).build()
 
         val builder = MethodSpec.methodBuilder(attributeName)
-                .addJavadoc(
-                        "Set a click listener that will provide the parent view, model, and adapter "
-                                + "position of the clicked view. This will clear the normal View.OnClickListener "
-                                + "if one has been set")
-                .addModifiers(PUBLIC)
-                .returns(classInfo.parameterizedGeneratedName)
-                .addParameter(param)
-                .addAnnotations(attribute.getSetterAnnotations())
+            .addJavadoc(
+                "Set a click listener that will provide the parent view, model, and adapter "
+                        + "position of the clicked view. This will clear the normal View.OnClickListener "
+                        + "if one has been set"
+            )
+            .addModifiers(PUBLIC)
+            .returns(classInfo.parameterizedGeneratedName)
+            .addParameter(param)
 
         setBitSetIfNeeded(classInfo, attribute, builder)
 
-        val wrapperClickListenerConstructor = CodeBlock.of("new \$T(\$L)",
-                                                           getClassName(WRAPPED_LISTENER_TYPE),
-                                                           param.name)
+        val wrapperClickListenerConstructor = CodeBlock.of(
+            "new \$T(\$L)",
+            getClassName(WRAPPED_LISTENER_TYPE),
+            param.name
+        )
 
         addOnMutationCall(builder)
-                .beginControlFlow("if (\$L == null)", attributeName)
-                .addStatement(attribute.setterCode(), "null")
-                .endControlFlow()
-                .beginControlFlow("else")
-                .addStatement(attribute.setterCode(), wrapperClickListenerConstructor)
-                .endControlFlow()
-                .addStatement("return this")
+            .beginControlFlow("if (\$L == null)", attributeName)
+            .addStatement(attribute.setterCode(), "null")
+            .endControlFlow()
+            .beginControlFlow("else")
+            .addStatement(attribute.setterCode(), wrapperClickListenerConstructor)
+            .endControlFlow()
+            .addStatement("return this")
 
         return builder.build()
     }
@@ -1076,25 +1186,27 @@ internal class GeneratedModelWriter(
         addStatement("\$T that = (\$T) o", helperClass.generatedName, helperClass.generatedName)
 
         startNotEqualsControlFlow(
-                this,
-                false,
-                getClassName(ON_BIND_MODEL_LISTENER_TYPE),
-                modelBindListenerFieldName())
+            this,
+            false,
+            getClassName(ON_BIND_MODEL_LISTENER_TYPE),
+            modelBindListenerFieldName()
+        )
         addStatement("return false")
         endControlFlow()
 
         startNotEqualsControlFlow(
-                this,
-                false,
-                getClassName(ON_UNBIND_MODEL_LISTENER_TYPE),
-                modelUnbindListenerFieldName())
+            this,
+            false,
+            getClassName(ON_UNBIND_MODEL_LISTENER_TYPE),
+            modelUnbindListenerFieldName()
+        )
         addStatement("return false")
         endControlFlow()
 
         for (attributeInfo in helperClass.getAttributeInfo()) {
             val type = attributeInfo.typeName
 
-            if (!attributeInfo.useInHash() && type.isPrimitive) {
+            if (!attributeInfo.useInHash && type.isPrimitive) {
                 continue
             }
 
@@ -1113,21 +1225,21 @@ internal class GeneratedModelWriter(
         addStatement("int result = super.hashCode()")
 
         addHashCodeLineForType(
-                this,
-                false,
-                getClassName(ON_BIND_MODEL_LISTENER_TYPE),
-                modelBindListenerFieldName()
+            this,
+            false,
+            getClassName(ON_BIND_MODEL_LISTENER_TYPE),
+            modelBindListenerFieldName()
         )
 
         addHashCodeLineForType(
-                this,
-                false,
-                getClassName(ON_UNBIND_MODEL_LISTENER_TYPE),
-                modelUnbindListenerFieldName()
+            this,
+            false,
+            getClassName(ON_UNBIND_MODEL_LISTENER_TYPE),
+            modelUnbindListenerFieldName()
         )
 
         for (attributeInfo in helperClass.getAttributeInfo()) {
-            if (!attributeInfo.useInHash()) {
+            if (!attributeInfo.useInHash) {
                 continue
             }
             if (attributeInfo.typeName === DOUBLE) {
@@ -1139,12 +1251,14 @@ internal class GeneratedModelWriter(
         for (attributeInfo in helperClass.getAttributeInfo()) {
             val type = attributeInfo.typeName
 
-            if (!attributeInfo.useInHash() && type.isPrimitive) {
+            if (!attributeInfo.useInHash && type.isPrimitive) {
                 continue
             }
 
-            addHashCodeLineForType(this, attributeInfo.useInHash(), type,
-                                   attributeInfo.getterCode())
+            addHashCodeLineForType(
+                this, attributeInfo.useInHash, type,
+                attributeInfo.getterCode()
+            )
         }
 
         addStatement("return result")
@@ -1160,18 +1274,26 @@ internal class GeneratedModelWriter(
 
         var first = true
         for (attributeInfo in helperClass.getAttributeInfo()) {
-            if (attributeInfo.doNotUseInToString()) {
+            if (attributeInfo.doNotUseInToString) {
                 continue
             }
 
-            val attributeName = attributeInfo.getFieldName()
+            val attributeName = attributeInfo.fieldName
             if (first) {
-                sb.append(String.format("\"%s=\" + %s +\n", attributeName,
-                                        attributeInfo.getterCode()))
+                sb.append(
+                    String.format(
+                        "\"%s=\" + %s +\n", attributeName,
+                        attributeInfo.getterCode()
+                    )
+                )
                 first = false
             } else {
-                sb.append(String.format("\", %s=\" + %s +\n", attributeName,
-                                        attributeInfo.getterCode()))
+                sb.append(
+                    String.format(
+                        "\", %s=\" + %s +\n", attributeName,
+                        attributeInfo.getterCode()
+                    )
+                )
             }
         }
 
@@ -1183,19 +1305,19 @@ internal class GeneratedModelWriter(
     private fun generateGetter(data: AttributeInfo) = buildMethod(data.generatedGetterName()) {
         addModifiers(PUBLIC)
         returns(data.typeName)
-        addAnnotations(data.getGetterAnnotations())
+        addAnnotations(data.getterAnnotations)
         addStatement("return \$L", data.superGetterCode())
     }
 
     private fun generateSetter(
-            modelInfo: GeneratedModelInfo,
-            attribute: AttributeInfo
+        modelInfo: GeneratedModelInfo,
+        attribute: AttributeInfo
     ): MethodSpec {
-        val attributeName = attribute.getFieldName()
+        val attributeName = attribute.fieldName
         val paramName = attribute.generatedSetterName()
         val builder = MethodSpec.methodBuilder(attribute.generatedSetterName())
-                .addModifiers(PUBLIC)
-                .returns(modelInfo.parameterizedGeneratedName)
+            .addModifiers(PUBLIC)
+            .returns(modelInfo.parameterizedGeneratedName)
 
         val hasMultipleParams = attribute is MultiParamAttribute
         if (hasMultipleParams) {
@@ -1203,8 +1325,9 @@ internal class GeneratedModelWriter(
             builder.varargs((attribute as MultiParamAttribute).varargs())
         } else {
             builder.addParameter(
-                    ParameterSpec.builder(attribute.typeName, paramName)
-                            .addAnnotations(attribute.getSetterAnnotations()).build())
+                ParameterSpec.builder(attribute.typeName, paramName)
+                    .addAnnotations(attribute.setterAnnotations).build()
+            )
         }
 
         if (attribute.javaDoc != null) {
@@ -1217,49 +1340,55 @@ internal class GeneratedModelWriter(
 
         setBitSetIfNeeded(modelInfo, attribute, builder)
 
-        if (attribute.isOverload) {
-            for (overload in attribute.attributeGroup.attributes) {
-                if (overload === attribute) {
-                    // Need to clear the other attributes in the group
-                    continue
-                }
-
-                if (shouldUseBitSet(modelInfo)) {
-                    builder.addStatement("\$L.clear(\$L)", ATTRIBUTES_BITSET_FIELD_NAME,
-                                         attributeIndex(modelInfo, overload))
-                }
-
-                builder.addStatement(overload.setterCode(),
-                                     if (overload.codeToSetDefault.isPresent)
-                                         overload.codeToSetDefault.value()
-                                     else
-                                         Utils.getDefaultValue(overload.typeName))
+        for (overload in (attribute.attributeGroup?.attributes ?: emptyList())) {
+            if (overload === attribute) {
+                // Need to clear the other attributes in the group
+                continue
             }
+
+            if (shouldUseBitSet(modelInfo)) {
+                builder.addStatement(
+                    "\$L.clear(\$L)", ATTRIBUTES_BITSET_FIELD_NAME,
+                    attributeIndex(modelInfo, overload)
+                )
+            }
+
+            builder.addStatement(
+                overload.setterCode(),
+                if (overload.codeToSetDefault.isPresent)
+                    overload.codeToSetDefault.value()
+                else
+                    Utils.getDefaultValue(overload.typeName)
+            )
         }
 
         addOnMutationCall(builder)
-                .addStatement(attribute.setterCode(),
-                              if (hasMultipleParams)
-                                  (attribute as MultiParamAttribute).valueToSetOnAttribute
-                              else
-                                  paramName)
+            .addStatement(
+                attribute.setterCode(),
+                if (hasMultipleParams)
+                    (attribute as MultiParamAttribute).valueToSetOnAttribute
+                else
+                    paramName
+            )
 
         // Call the super setter if it exists.
         // No need to do this if the attribute is private since we already called the super setter to
         // set it
-        if (!attribute.isPrivate && attribute.hasSuperSetterMethod()) {
+        if (!attribute.isPrivate && attribute.hasSuperSetter) {
             if (hasMultipleParams) {
                 errorLogger
-                        .logError("Multi params not supported for methods that call super (%s)",
-                                  attribute)
+                    .logError(
+                        "Multi params not supported for methods that call super (%s)",
+                        attribute
+                    )
             }
 
             builder.addStatement("super.\$L(\$L)", attributeName, paramName)
         }
 
         return builder
-                .addStatement("return this")
-                .build()
+            .addStatement("return this")
+            .build()
     }
 
     private fun generateReset(helperClass: GeneratedModelInfo) = buildMethod("reset") {
@@ -1274,28 +1403,170 @@ internal class GeneratedModelWriter(
         }
 
         helperClass.getAttributeInfo()
-                .filterNot { it.hasFinalModifier() }
-                .forEach {
-                    addStatement(it.setterCode(),
-                                 if (it.codeToSetDefault.isPresent)
-                                     it.codeToSetDefault.value()
-                                 else
-                                     Utils.getDefaultValue(it.typeName))
-                }
+            .filterNot { it.hasFinalModifier }
+            .forEach {
+                addStatement(
+                    it.setterCode(),
+                    if (it.codeToSetDefault.isPresent)
+                        it.codeToSetDefault.value()
+                    else
+                        Utils.getDefaultValue(it.typeName)
+                )
+            }
 
         addStatement("super.reset()")
         addStatement("return this")
     }
 
     private fun addHashCodeValidationIfNecessary(
-            method: MethodSpec.Builder,
-            message: String
+        method: MethodSpec.Builder,
+        message: String
     ): MethodSpec.Builder {
         if (configManager.shouldValidateModelUsage()) {
             method.addStatement("validateStateHasNotChangedSinceAdded(\$S, position)", message)
         }
 
         return method
+    }
+
+    /**
+     * If the modelfactory module is present, and if this model supports it, this generates a static
+     * method whose purpose is to create a new model based on a typed mapping of property names to
+     * values provided via the ModelProperties interface. Notably, this generated method makes it
+     * easy to create models from JSON and various other data formats.
+     */
+    private fun addFromPropertiesMethodIfNeeded(
+        classBuilder: TypeSpec.Builder,
+        modelInfo: GeneratedModelInfo
+    ) {
+        // The epoxy-modelfactory module must be present to enable this functionality
+        if (!elements.isTypeLoaded(EPOXY_MODEL_PROPERTIES)) {
+            return
+        }
+
+        // Models that don't have an empty constructor are not supported because there would be no
+        // clear way to create new instances
+        if (!modelInfo.hasEmptyConstructor()) {
+            return
+        }
+
+        val attributeInfoConditions = listOf(
+            AttributeInfo::isBoolean,
+            AttributeInfo::isCharSequenceOrString,
+            AttributeInfo::isDouble,
+            AttributeInfo::isDrawableRes,
+            AttributeInfo::isEpoxyModelList,
+            AttributeInfo::isInt,
+            AttributeInfo::isLong,
+            AttributeInfo::isRawRes,
+            AttributeInfo::isStringList,
+            AttributeInfo::isStringAttributeData,
+            AttributeInfo::isViewClickListener
+        )
+        val supportedAttributeInfo = if (modelInfo.attributeGroups.isNotEmpty()) {
+            modelInfo.attributeInfo
+                .groupBy { it.generatedSetterName() }
+                .mapNotNull {
+                    // Amongst attributes with a supported type, we only include those that have a
+                    // unique name. This means that multiple attributes with the same name and
+                    // supported types are excluded, because we wouldn't know which one to use.
+                    it.value.singleOrNull { attributeInfo ->
+                        attributeInfoConditions.any { it.invoke(attributeInfo) }
+                    }
+                }
+        } else {
+            // attributeGroups is always empty for models not using @ModelView
+            modelInfo.attributeInfo.filter { attributeInfo ->
+                attributeInfoConditions.any { it.invoke(attributeInfo) }
+            }
+        }
+        val supportedWithSetterAttributeInfo = supportedAttributeInfo
+            .filter { it.generateSetter && !it.hasFinalModifier }
+
+        // If none of the properties are of a supported type the method isn't generated
+        if (supportedWithSetterAttributeInfo.isEmpty()) {
+            return
+        }
+
+        val method = MethodSpec.methodBuilder("from").apply {
+            addModifiers(PUBLIC, STATIC)
+            addParameter(EPOXY_MODEL_PROPERTIES, "properties")
+            returns(modelInfo.generatedClassName)
+
+            addStatement(
+                "\$T model = new \$T()",
+                modelInfo.generatedClassName,
+                modelInfo.generatedClassName
+            )
+
+            addStatement("model.id(properties.getId())")
+
+            // Groups attributes that are part of the same attribute group, others will be by
+            // themselves (at this point no two attributes should have the same generated setter
+            // name).
+            val supportedAttributeInfoGroups = supportedAttributeInfo.groupBy {
+                if (it.groupKey.isNullOrEmpty()) {
+                    it.generatedSetterName()
+                } else {
+                    it.groupKey
+                }
+            }
+
+            for ((_, attributeInfoGroup) in supportedAttributeInfoGroups) {
+                for ((index, attributeInfo) in attributeInfoGroup.withIndex()) {
+                    val setterName = attributeInfo.generatedSetterName()
+                    val isStartOfGroup = index == 0
+                    val isEndOfGroup = index == attributeInfoGroup.size - 1
+
+                    if (isStartOfGroup) {
+                        beginControlFlow("if (properties.has(\$S))", setterName)
+                    } else {
+                        nextControlFlow("else if (properties.has(\$S))", setterName)
+                    }
+
+                    val jsonGetterName = when {
+                        attributeInfo.isBoolean -> "getBoolean"
+                        attributeInfo.isCharSequenceOrString
+                                || attributeInfo.isStringAttributeData -> "getString"
+                        attributeInfo.isDouble -> "getDouble"
+                        attributeInfo.isDrawableRes -> "getDrawableRes"
+                        attributeInfo.isEpoxyModelList -> "getEpoxyModelList"
+                        attributeInfo.isInt && !attributeInfo.isDrawableRes && !attributeInfo.isRawRes -> "getInt"
+                        attributeInfo.isLong -> "getLong"
+                        attributeInfo.isRawRes -> "getRawRes"
+                        attributeInfo.isStringList -> "getStringList"
+                        attributeInfo.isViewClickListener -> "getOnClickListener"
+                        else -> {
+                            errorLogger.logError("Missing ModelProperties method for a supported attribute type.")
+                            null
+                        }
+                    }
+                    jsonGetterName?.let {
+                        addStatement(
+                            "model.\$N(properties.\$N(\$S))",
+                            setterName,
+                            jsonGetterName,
+                            setterName
+                        )
+                    }
+
+                    if (isEndOfGroup) {
+                        endControlFlow()
+                    }
+                }
+            }
+
+            if (modelInfo.isStyleable) {
+                addStatement("\$T style = properties.getStyle()", PARIS_STYLE)
+                beginControlFlow("if (style != null)")
+                addStatement("model.style(style)")
+                endControlFlow()
+            }
+
+            addStatement("return model")
+        }.build()
+
+        classBuilder.addMethod(method)
     }
 
     companion object {
@@ -1311,14 +1582,16 @@ internal class GeneratedModelWriter(
         fun shouldUseBitSet(info: GeneratedModelInfo): Boolean = info is ModelViewInfo
 
         fun isAttributeSetCode(
-                info: GeneratedModelInfo,
-                attribute: AttributeInfo
-        ) = CodeBlock.of("\$L.get(\$L)", ATTRIBUTES_BITSET_FIELD_NAME,
-                         attributeIndex(info, attribute))!!
+            info: GeneratedModelInfo,
+            attribute: AttributeInfo
+        ) = CodeBlock.of(
+            "\$L.get(\$L)", ATTRIBUTES_BITSET_FIELD_NAME,
+            attributeIndex(info, attribute)
+        )!!
 
         private fun attributeIndex(
-                modelInfo: GeneratedModelInfo,
-                attributeInfo: AttributeInfo
+            modelInfo: GeneratedModelInfo,
+            attributeInfo: AttributeInfo
         ): Int {
             val index = modelInfo.attributeInfo.indexOf(attributeInfo)
             if (index < 0) {
@@ -1328,109 +1601,134 @@ internal class GeneratedModelWriter(
         }
 
         fun setBitSetIfNeeded(
-                modelInfo: GeneratedModelInfo,
-                attr: AttributeInfo,
-                stringSetter: Builder
+            modelInfo: GeneratedModelInfo,
+            attr: AttributeInfo,
+            stringSetter: Builder
         ) {
             if (shouldUseBitSet(modelInfo)) {
-                stringSetter.addStatement("\$L.set(\$L)", ATTRIBUTES_BITSET_FIELD_NAME,
-                                          attributeIndex(modelInfo, attr))
+                stringSetter.addStatement(
+                    "\$L.set(\$L)", ATTRIBUTES_BITSET_FIELD_NAME,
+                    attributeIndex(modelInfo, attr)
+                )
             }
         }
 
         fun addParameterNullCheckIfNeeded(
-                configManager: ConfigManager,
-                attr: AttributeInfo,
-                paramName: String,
-                builder: Builder
+            configManager: ConfigManager,
+            attr: AttributeInfo,
+            paramName: String,
+            builder: Builder
         ) {
 
             if (configManager.shouldValidateModelUsage()
-                    && attr.hasSetNullability()
-                    && !attr.isNullable) {
+                && attr.hasSetNullability()
+                && !attr.isNullable()
+            ) {
 
                 builder.beginControlFlow("if (\$L == null)", paramName)
-                        .addStatement("throw new \$T(\"\$L cannot be null\")",
-                                      IllegalArgumentException::class.java, paramName)
-                        .endControlFlow()
+                    .addStatement(
+                        "throw new \$T(\"\$L cannot be null\")",
+                        IllegalArgumentException::class.java, paramName
+                    )
+                    .endControlFlow()
             }
         }
 
         fun startNotEqualsControlFlow(
-                methodBuilder: MethodSpec.Builder,
-                attribute: AttributeInfo
+            methodBuilder: MethodSpec.Builder,
+            attribute: AttributeInfo
         ): MethodSpec.Builder {
             val attributeType = attribute.typeName
-            val useHash = attributeType.isPrimitive || attribute.useInHash()
-            return startNotEqualsControlFlow(methodBuilder, useHash, attributeType,
-                                             attribute.getterCode())
+            val useHash = attributeType.isPrimitive || attribute.useInHash
+            return startNotEqualsControlFlow(
+                methodBuilder, useHash, attributeType,
+                attribute.getterCode()
+            )
         }
 
         fun startNotEqualsControlFlow(
-                builder: Builder,
-                useObjectHashCode: Boolean,
-                type: TypeName,
-                accessorCode: String
-        ) = builder.beginControlFlow("if (\$L)",
-                                     notEqualsCodeBlock(useObjectHashCode, type, accessorCode))
+            builder: Builder,
+            useObjectHashCode: Boolean,
+            type: TypeName,
+            accessorCode: String
+        ) = builder.beginControlFlow(
+            "if (\$L)",
+            notEqualsCodeBlock(useObjectHashCode, type, accessorCode)
+        )
 
         fun notEqualsCodeBlock(attribute: AttributeInfo): CodeBlock {
             val attributeType = attribute.typeName
-            val useHash = attributeType.isPrimitive || attribute.useInHash()
+            val useHash = attributeType.isPrimitive || attribute.useInHash
             return notEqualsCodeBlock(useHash, attributeType, attribute.getterCode())
         }
 
         fun notEqualsCodeBlock(
-                useObjectHashCode: Boolean,
-                type: TypeName,
-                accessorCode: String
+            useObjectHashCode: Boolean,
+            type: TypeName,
+            accessorCode: String
         ): CodeBlock = if (useObjectHashCode) {
             when {
-                type === FLOAT -> CodeBlock.of("(Float.compare(that.\$L, \$L) != 0)",
-                                               accessorCode, accessorCode)
-                type === DOUBLE -> CodeBlock.of("(Double.compare(that.\$L, \$L) != 0)",
-                                                accessorCode, accessorCode)
+                type === FLOAT -> CodeBlock.of(
+                    "(Float.compare(that.\$L, \$L) != 0)",
+                    accessorCode, accessorCode
+                )
+                type === DOUBLE -> CodeBlock.of(
+                    "(Double.compare(that.\$L, \$L) != 0)",
+                    accessorCode, accessorCode
+                )
                 type.isPrimitive -> CodeBlock.of("(\$L != that.\$L)", accessorCode, accessorCode)
-                type is ArrayTypeName -> CodeBlock.of("!\$T.equals(\$L, that.\$L)",
-                                                      TypeName.get(Arrays::class.java),
-                                                      accessorCode, accessorCode)
+                type is ArrayTypeName -> CodeBlock.of(
+                    "!\$T.equals(\$L, that.\$L)",
+                    TypeName.get(Arrays::class.java),
+                    accessorCode, accessorCode
+                )
                 else -> CodeBlock.of(
-                        "(\$L != null ? !\$L.equals(that.\$L) : that.\$L != null)",
-                        accessorCode, accessorCode, accessorCode, accessorCode)
+                    "(\$L != null ? !\$L.equals(that.\$L) : that.\$L != null)",
+                    accessorCode, accessorCode, accessorCode, accessorCode
+                )
             }
         } else {
             CodeBlock.of("((\$L == null) != (that.\$L == null))", accessorCode, accessorCode)
         }
 
         private fun addHashCodeLineForType(
-                builder: Builder,
-                useObjectHashCode: Boolean,
-                type: TypeName,
-                accessorCode: String
+            builder: Builder,
+            useObjectHashCode: Boolean,
+            type: TypeName,
+            accessorCode: String
         ) {
             builder.apply {
                 if (useObjectHashCode) {
                     when (type) {
-                        BYTE, CHAR, SHORT, INT -> addStatement("result = 31 * result + \$L",
-                                                               accessorCode)
-                        LONG -> addStatement("result = 31 * result + (int) (\$L ^ (\$L >>> 32))",
-                                             accessorCode,
-                                             accessorCode)
+                        BYTE, CHAR, SHORT, INT -> addStatement(
+                            "result = 31 * result + \$L",
+                            accessorCode
+                        )
+                        LONG -> addStatement(
+                            "result = 31 * result + (int) (\$L ^ (\$L >>> 32))",
+                            accessorCode,
+                            accessorCode
+                        )
                         FLOAT -> addStatement(
-                                "result = 31 * result + (\$L != +0.0f " + "? Float.floatToIntBits(\$L) : 0)",
-                                accessorCode, accessorCode)
+                            "result = 31 * result + (\$L != +0.0f " + "? Float.floatToIntBits(\$L) : 0)",
+                            accessorCode, accessorCode
+                        )
                         DOUBLE -> {
                             addStatement("temp = Double.doubleToLongBits(\$L)", accessorCode)
                             addStatement("result = 31 * result + (int) (temp ^ (temp >>> 32))")
                         }
-                        BOOLEAN -> addStatement("result = 31 * result + (\$L ? 1 : 0)",
-                                                accessorCode)
+                        BOOLEAN -> addStatement(
+                            "result = 31 * result + (\$L ? 1 : 0)",
+                            accessorCode
+                        )
                         is ArrayTypeName -> addStatement(
-                                "result = 31 * result + Arrays.hashCode(\$L)", accessorCode)
+                            "result = 31 * result + Arrays.hashCode(\$L)", accessorCode
+                        )
                         else -> addStatement(
-                                "result = 31 * result + (\$L != null ? \$L.hashCode() : 0)",
-                                accessorCode,
-                                accessorCode)
+                            "result = 31 * result + (\$L != null ? \$L.hashCode() : 0)",
+                            accessorCode,
+                            accessorCode
+                        )
                     }
                 } else {
                     addStatement("result = 31 * result + (\$L != null ? 1 : 0)", accessorCode)
@@ -1441,13 +1739,15 @@ internal class GeneratedModelWriter(
         fun addOnMutationCall(method: MethodSpec.Builder) = method.addStatement("onMutation()")!!
 
         fun modelImplementsBindWithDiff(
-                clazz: TypeElement,
-                bindWithDiffMethod: MethodSpec,
-                types: Types,
-                elements: Elements
+            clazz: TypeElement,
+            bindWithDiffMethod: MethodSpec,
+            types: Types,
+            elements: Elements
         ): Boolean {
-            val methodOnClass = Utils.getMethodOnClass(clazz, bindWithDiffMethod, types,
-                                                       elements) ?: return false
+            val methodOnClass = Utils.getMethodOnClass(
+                clazz, bindWithDiffMethod, types,
+                elements
+            ) ?: return false
 
             if (Modifier.ABSTRACT in methodOnClass.modifiers) {
                 return false

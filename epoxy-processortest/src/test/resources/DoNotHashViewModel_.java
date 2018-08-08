@@ -152,8 +152,7 @@ public class DoNotHashViewModel_ extends EpoxyModel<DoNotHashView> implements Ge
 
   /**
    * Set a click listener that will provide the parent view, model, and adapter position of the clicked view. This will clear the normal View.OnClickListener if one has been set */
-  @NonNull
-  public DoNotHashViewModel_ clickListener(final OnModelClickListener<DoNotHashViewModel_, DoNotHashView> clickListener) {
+  public DoNotHashViewModel_ clickListener(@NonNull final OnModelClickListener<DoNotHashViewModel_, DoNotHashView> clickListener) {
     assignedAttributes_epoxyGeneratedModel.set(1);
     onMutation();
     if (clickListener == null) {
@@ -212,7 +211,7 @@ public class DoNotHashViewModel_ extends EpoxyModel<DoNotHashView> implements Ge
   }
 
   @Override
-  public DoNotHashViewModel_ id(@NonNull Number... arg0) {
+  public DoNotHashViewModel_ id(@Nullable Number... arg0) {
     super.id(arg0);
     return this;
   }
@@ -224,19 +223,19 @@ public class DoNotHashViewModel_ extends EpoxyModel<DoNotHashView> implements Ge
   }
 
   @Override
-  public DoNotHashViewModel_ id(@NonNull CharSequence arg0) {
+  public DoNotHashViewModel_ id(@Nullable CharSequence arg0) {
     super.id(arg0);
     return this;
   }
 
   @Override
-  public DoNotHashViewModel_ id(@NonNull CharSequence arg0, @NonNull CharSequence... arg1) {
+  public DoNotHashViewModel_ id(@Nullable CharSequence arg0, @Nullable CharSequence... arg1) {
     super.id(arg0, arg1);
     return this;
   }
 
   @Override
-  public DoNotHashViewModel_ id(@NonNull CharSequence arg0, long arg1) {
+  public DoNotHashViewModel_ id(@Nullable CharSequence arg0, long arg1) {
     super.id(arg0, arg1);
     return this;
   }

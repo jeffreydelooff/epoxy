@@ -26,9 +26,9 @@ rootProject.ext.ANDROIDX_DATABINDING_COMPILER = "3.2.0-alpha17"
 rootProject.ext.ANDROIDX_DATABINDING_ADAPTERS = "3.2.0-alpha17"
 rootProject.ext.ANDROIDX_DATABINDING_LIBRARY = "3.2.0-alpha11"
 
-rootProject.ext.BUTTERKNIFE_VERSION = "8.8.1"
+rootProject.ext.BUTTERKNIFE_VERSION = "9.0.0-SNAPSHOT"
 rootProject.ext.SQUARE_JAVAPOET_VERSION = "1.9.0"
-rootProject.ext.SQUARE_KOTLINPOET_VERSION = "0.5.0"
+rootProject.ext.SQUARE_KOTLINPOET_VERSION = "0.7.0"
 
 rootProject.ext.ASSERTJ_VERSION = "1.7.1"
 rootProject.ext.GOOGLE_TESTING_COMPILE_VERSION = "0.15"
@@ -45,7 +45,7 @@ rootProject.ext.AUTO_VALUE_VERSION = "1.3"
 rootProject.ext.PARIS_VERSION = "1.0.0"
 
 rootProject.ext.deps = [
-    kotlin                : "org.jetbrains.kotlin:kotlin-stdlib-jre7:$KOTLIN_VERSION",
+    kotlin                : "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$KOTLIN_VERSION",
     autoValue             : "com.google.auto.value:auto-value:$AUTO_VALUE_VERSION",
     androidAppcompat      : "androidx.appcompat:appcompat:$ANDROIDX_APPCOMPAT",
     androidCardView       : "androidx.cardview:cardview:$ANDROIDX_CARDVIEW",

@@ -302,13 +302,20 @@ public class EpoxyModelGroup extends EpoxyModelWithHolder<Holder>
 
   @Override
   protected final Holder createNewHolder() {
-    return new Holder();
+    return new Holder(this);
   }
 
-  public class Holder extends EpoxyHolder {
+  public static class Holder extends EpoxyHolder {
+    // We use the model group that was used to create the view holder for initializing the view.
+    // We release the reference after the viewholder is initialized.
+    private EpoxyModelGroup initializingModelGroup;
     private List<View> views;
     private List<EpoxyHolder> holders;
     private ViewGroup rootView;
+
+    public Holder(@NonNull EpoxyModelGroup initializingModelGroup) {
+      this.initializingModelGroup = initializingModelGroup;
+    }
 
     /**
      * Get the root view group (aka
@@ -321,7 +328,7 @@ public class EpoxyModelGroup extends EpoxyModelWithHolder<Holder>
     }
 
     @Override
-    protected void bindView(View itemView) {
+    protected void bindView(@NonNull View itemView) {
       if (!(itemView instanceof ViewGroup)) {
         throw new IllegalStateException(
             "The layout provided to EpoxyModelGroup must be a ViewGroup");
@@ -329,7 +336,9 @@ public class EpoxyModelGroup extends EpoxyModelWithHolder<Holder>
       rootView = (ViewGroup) itemView;
       ViewGroup childContainer = findChildContainer(rootView);
 
+      List<? extends EpoxyModel<?>> models = initializingModelGroup.models;
       int modelCount = models.size();
+
       views = new ArrayList<>(modelCount);
       holders = new ArrayList<>(modelCount);
 
@@ -338,7 +347,8 @@ public class EpoxyModelGroup extends EpoxyModelWithHolder<Holder>
         EpoxyModel model = models.get(i);
         View view;
         if (useViewStubs) {
-          view = replaceNextViewStub(childContainer, model, useViewStubLayoutParams(model, i));
+          view = replaceNextViewStub(childContainer, model,
+              initializingModelGroup.useViewStubLayoutParams(model, i));
         } else {
           view = createAndAddView(childContainer, model);
         }
@@ -353,6 +363,8 @@ public class EpoxyModelGroup extends EpoxyModelWithHolder<Holder>
 
         views.add(view);
       }
+
+      initializingModelGroup = null;
     }
 
     /**

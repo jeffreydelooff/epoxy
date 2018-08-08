@@ -13,24 +13,21 @@ android {
     targetSdkVersion rootProject.TARGET_SDK_VERSION
     versionCode 1
     versionName "1.0"
-
-    testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-
   }
 
   dataBinding {
     enabled = true
   }
-
 }
 
 dependencies {
   implementation rootProject.deps.kotlin
-  implementation rootProject.deps.androidRecyclerView
-  implementation rootProject.deps.androidAppcompat
   implementation project(':epoxy-databinding')
-  implementation project(':epoxy-adapter')
-  implementation project(':epoxy-annotations')
+
+  implementation rootProject.deps.androidAppcompat
+  implementation rootProject.deps.androidRecyclerView
+  implementation "androidx.lifecycle:lifecycle-runtime:2.0.0-beta01"
+  implementation "androidx.collection:collection:1.0.0-beta01"
 
   kapt project(':epoxy-processor')
 

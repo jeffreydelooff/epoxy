@@ -11,6 +11,12 @@ android {
   defaultConfig {
     minSdkVersion rootProject.MIN_SDK_VERSION
     targetSdkVersion rootProject.TARGET_SDK_VERSION
+
+    javaCompileOptions {
+      annotationProcessorOptions {
+        includeCompileClasspath false
+      }
+    }
   }
 
   dataBinding {
@@ -38,9 +44,9 @@ dependencies {
 
   kapt rootProject.deps.autoValue
 
+  testImplementation rootProject.deps.googleTestingCompile
   testImplementation files(getRuntimeJar())
   testImplementation files(Jvm.current().getToolsJar())
-  testImplementation rootProject.deps.googleTestingCompile
 }
 
 static def getRuntimeJar() {

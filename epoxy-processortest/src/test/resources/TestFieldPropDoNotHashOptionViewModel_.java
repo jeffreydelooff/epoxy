@@ -121,8 +121,7 @@ public class TestFieldPropDoNotHashOptionViewModel_ extends EpoxyModel<TestField
 
   /**
    * Set a click listener that will provide the parent view, model, and adapter position of the clicked view. This will clear the normal View.OnClickListener if one has been set */
-  @NonNull
-  public TestFieldPropDoNotHashOptionViewModel_ value(final OnModelClickListener<TestFieldPropDoNotHashOptionViewModel_, TestFieldPropDoNotHashOptionView> value) {
+  public TestFieldPropDoNotHashOptionViewModel_ value(@NonNull final OnModelClickListener<TestFieldPropDoNotHashOptionViewModel_, TestFieldPropDoNotHashOptionView> value) {
     assignedAttributes_epoxyGeneratedModel.set(0);
     onMutation();
     if (value == null) {
@@ -161,7 +160,7 @@ public class TestFieldPropDoNotHashOptionViewModel_ extends EpoxyModel<TestField
   }
 
   @Override
-  public TestFieldPropDoNotHashOptionViewModel_ id(@NonNull Number... arg0) {
+  public TestFieldPropDoNotHashOptionViewModel_ id(@Nullable Number... arg0) {
     super.id(arg0);
     return this;
   }
@@ -173,20 +172,20 @@ public class TestFieldPropDoNotHashOptionViewModel_ extends EpoxyModel<TestField
   }
 
   @Override
-  public TestFieldPropDoNotHashOptionViewModel_ id(@NonNull CharSequence arg0) {
+  public TestFieldPropDoNotHashOptionViewModel_ id(@Nullable CharSequence arg0) {
     super.id(arg0);
     return this;
   }
 
   @Override
-  public TestFieldPropDoNotHashOptionViewModel_ id(@NonNull CharSequence arg0,
-      @NonNull CharSequence... arg1) {
+  public TestFieldPropDoNotHashOptionViewModel_ id(@Nullable CharSequence arg0,
+      @Nullable CharSequence... arg1) {
     super.id(arg0, arg1);
     return this;
   }
 
   @Override
-  public TestFieldPropDoNotHashOptionViewModel_ id(@NonNull CharSequence arg0, long arg1) {
+  public TestFieldPropDoNotHashOptionViewModel_ id(@Nullable CharSequence arg0, long arg1) {
     super.id(arg0, arg1);
     return this;
   }

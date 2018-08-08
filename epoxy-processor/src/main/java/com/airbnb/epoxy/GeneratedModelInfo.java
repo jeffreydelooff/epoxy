@@ -34,6 +34,7 @@ import javax.lang.model.util.Types;
 import androidx.annotation.Nullable;
 
 import static com.airbnb.epoxy.Utils.buildEpoxyException;
+import static com.airbnb.epoxy.Utils.isSubtypeOfType;
 
 abstract class GeneratedModelInfo {
   private static final String RESET_METHOD = "reset";
@@ -230,6 +231,27 @@ abstract class GeneratedModelInfo {
     return isStyleable() || layoutParams != Size.NONE;
   }
 
+  boolean hasEmptyConstructor() {
+    if (constructors.isEmpty()) {
+      return true;
+    } else {
+      for (ConstructorInfo constructor : constructors) {
+        if (constructor.params.isEmpty()) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  /**
+   * @return True if the super class of this generated model is also extended from a generated
+   * model.
+   */
+  public boolean isSuperClassAlsoGenerated() {
+    return isSubtypeOfType(superClassElement.asType(), "com.airbnb.epoxy.GeneratedModel<?>");
+  }
+
   static class ConstructorInfo {
     final Set<Modifier> modifiers;
     final List<ParameterSpec> params;
@@ -302,14 +324,14 @@ abstract class GeneratedModelInfo {
 
     AttributeInfo defaultAttribute = null;
     for (AttributeInfo attribute : attributes) {
-      if (attribute.isRequired() || attribute.codeToSetDefault.isEmpty()) {
+      if (attribute.isRequired() || attribute.getCodeToSetDefault().isEmpty()) {
         continue;
       }
 
       boolean hasSetExplicitDefault =
-          defaultAttribute != null && defaultAttribute.codeToSetDefault.explicit != null;
+          defaultAttribute != null && defaultAttribute.getCodeToSetDefault().getExplicit() != null;
 
-      if (hasSetExplicitDefault && attribute.codeToSetDefault.explicit != null) {
+      if (hasSetExplicitDefault && attribute.getCodeToSetDefault().getExplicit() != null) {
         throw buildEpoxyException(
             "Only one default value can exist for a group of attributes: " + attributes);
       }
@@ -324,7 +346,7 @@ abstract class GeneratedModelInfo {
       // is a nullable object and a primitive in a group, the default value will be to null out the
       // object.
       if (defaultAttribute == null
-          || attribute.codeToSetDefault.explicit != null
+          || attribute.getCodeToSetDefault().getExplicit() != null
           || attribute.hasSetNullability()) {
         defaultAttribute = attribute;
       }
@@ -349,7 +371,7 @@ abstract class GeneratedModelInfo {
         throw buildEpoxyException("Attributes cannot be empty");
       }
 
-      if (defaultAttribute != null && defaultAttribute.codeToSetDefault.isEmpty()) {
+      if (defaultAttribute != null && defaultAttribute.getCodeToSetDefault().isEmpty()) {
         throw buildEpoxyException("Default attribute has no default code");
       }
 
@@ -360,11 +382,12 @@ abstract class GeneratedModelInfo {
     }
 
     CodeBlock codeToSetDefaultValue() {
-      if (defaultAttribute == null || defaultAttribute.codeToSetDefault.isEmpty()) {
+      if (defaultAttribute == null || defaultAttribute.getCodeToSetDefault().isEmpty()) {
         throw new IllegalStateException("No default value exists");
       }
 
-      return CodeBlock.of(defaultAttribute.setterCode(), defaultAttribute.codeToSetDefault.value());
+      return CodeBlock
+          .of(defaultAttribute.setterCode(), defaultAttribute.getCodeToSetDefault().value());
     }
   }
 }

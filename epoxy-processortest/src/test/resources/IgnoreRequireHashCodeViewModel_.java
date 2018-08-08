@@ -106,8 +106,7 @@ public class IgnoreRequireHashCodeViewModel_ extends EpoxyModel<IgnoreRequireHas
 
   /**
    * Set a click listener that will provide the parent view, model, and adapter position of the clicked view. This will clear the normal View.OnClickListener if one has been set */
-  @NonNull
-  public IgnoreRequireHashCodeViewModel_ clickListener(final OnModelClickListener<IgnoreRequireHashCodeViewModel_, IgnoreRequireHashCodeView> clickListener) {
+  public IgnoreRequireHashCodeViewModel_ clickListener(@NonNull final OnModelClickListener<IgnoreRequireHashCodeViewModel_, IgnoreRequireHashCodeView> clickListener) {
     assignedAttributes_epoxyGeneratedModel.set(0);
     onMutation();
     if (clickListener == null) {
@@ -146,7 +145,7 @@ public class IgnoreRequireHashCodeViewModel_ extends EpoxyModel<IgnoreRequireHas
   }
 
   @Override
-  public IgnoreRequireHashCodeViewModel_ id(@NonNull Number... arg0) {
+  public IgnoreRequireHashCodeViewModel_ id(@Nullable Number... arg0) {
     super.id(arg0);
     return this;
   }
@@ -158,20 +157,20 @@ public class IgnoreRequireHashCodeViewModel_ extends EpoxyModel<IgnoreRequireHas
   }
 
   @Override
-  public IgnoreRequireHashCodeViewModel_ id(@NonNull CharSequence arg0) {
+  public IgnoreRequireHashCodeViewModel_ id(@Nullable CharSequence arg0) {
     super.id(arg0);
     return this;
   }
 
   @Override
-  public IgnoreRequireHashCodeViewModel_ id(@NonNull CharSequence arg0,
-      @NonNull CharSequence... arg1) {
+  public IgnoreRequireHashCodeViewModel_ id(@Nullable CharSequence arg0,
+      @Nullable CharSequence... arg1) {
     super.id(arg0, arg1);
     return this;
   }
 
   @Override
-  public IgnoreRequireHashCodeViewModel_ id(@NonNull CharSequence arg0, long arg1) {
+  public IgnoreRequireHashCodeViewModel_ id(@Nullable CharSequence arg0, long arg1) {
     super.id(arg0, arg1);
     return this;
   }

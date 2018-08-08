@@ -3,7 +3,7 @@ package com.airbnb.epoxy;
 import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.LayoutRes;
-import androidx.annotation.NonNull;
+
 import java.lang.CharSequence;
 import java.lang.Number;
 import java.lang.Object;
@@ -117,8 +117,7 @@ public class TestFieldPropNullOnRecycleOptionViewModel_ extends EpoxyModel<TestF
 
   /**
    * Set a click listener that will provide the parent view, model, and adapter position of the clicked view. This will clear the normal View.OnClickListener if one has been set */
-  @Nullable
-  public TestFieldPropNullOnRecycleOptionViewModel_ value(final OnModelClickListener<TestFieldPropNullOnRecycleOptionViewModel_, TestFieldPropNullOnRecycleOptionView> value) {
+  public TestFieldPropNullOnRecycleOptionViewModel_ value(@Nullable final OnModelClickListener<TestFieldPropNullOnRecycleOptionViewModel_, TestFieldPropNullOnRecycleOptionView> value) {
     assignedAttributes_epoxyGeneratedModel.set(0);
     onMutation();
     if (value == null) {
@@ -154,7 +153,7 @@ public class TestFieldPropNullOnRecycleOptionViewModel_ extends EpoxyModel<TestF
   }
 
   @Override
-  public TestFieldPropNullOnRecycleOptionViewModel_ id(@NonNull Number... arg0) {
+  public TestFieldPropNullOnRecycleOptionViewModel_ id(@androidx.annotation.Nullable Number... arg0) {
     super.id(arg0);
     return this;
   }
@@ -166,20 +165,21 @@ public class TestFieldPropNullOnRecycleOptionViewModel_ extends EpoxyModel<TestF
   }
 
   @Override
-  public TestFieldPropNullOnRecycleOptionViewModel_ id(@NonNull CharSequence arg0) {
+  public TestFieldPropNullOnRecycleOptionViewModel_ id(@androidx.annotation.Nullable CharSequence arg0) {
     super.id(arg0);
     return this;
   }
 
   @Override
-  public TestFieldPropNullOnRecycleOptionViewModel_ id(@NonNull CharSequence arg0,
-      @NonNull CharSequence... arg1) {
+  public TestFieldPropNullOnRecycleOptionViewModel_ id(@androidx.annotation.Nullable CharSequence arg0,
+      @androidx.annotation.Nullable CharSequence... arg1) {
     super.id(arg0, arg1);
     return this;
   }
 
   @Override
-  public TestFieldPropNullOnRecycleOptionViewModel_ id(@NonNull CharSequence arg0, long arg1) {
+  public TestFieldPropNullOnRecycleOptionViewModel_ id(@androidx.annotation.Nullable CharSequence arg0,
+      long arg1) {
     super.id(arg0, arg1);
     return this;
   }
