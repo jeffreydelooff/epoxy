@@ -27,7 +27,7 @@ dependencies {
     implementation rootProject.deps.androidDesignLibrary
     implementation rootProject.deps.androidAppcompat
     implementation project(':epoxy-annotations')
-    implementation project(':epoxy-adapter')
+    api project(':epoxy-adapter')
 
     testImplementation rootProject.deps.junit
     testImplementation rootProject.deps.robolectric

@@ -24,6 +24,9 @@ dependencies {
   implementation rootProject.deps.kotlin
   implementation project(':epoxy-databinding')
 
+  implementation "androidx.lifecycle:lifecycle-runtime:2.0.0-beta01"
+  implementation "androidx.collection:collection:1.0.0-beta01"
+
   kapt project(':epoxy-processor')
 
   testImplementation rootProject.deps.robolectric

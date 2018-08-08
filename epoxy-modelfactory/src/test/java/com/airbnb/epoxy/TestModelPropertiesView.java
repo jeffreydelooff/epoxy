@@ -1,14 +1,15 @@
 package com.airbnb.epoxy;
 
 import android.content.Context;
-import android.support.annotation.DrawableRes;
-import android.support.annotation.Nullable;
-import android.support.annotation.RawRes;
 import android.widget.FrameLayout;
 
 import com.airbnb.epoxy.ModelView.Size;
 
 import java.util.List;
+
+import androidx.annotation.DrawableRes;
+import androidx.annotation.Nullable;
+import androidx.annotation.RawRes;
 
 @ModelView(autoLayout = Size.MATCH_WIDTH_WRAP_HEIGHT)
 public class TestModelPropertiesView extends FrameLayout {

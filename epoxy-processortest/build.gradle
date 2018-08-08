@@ -44,9 +44,9 @@ dependencies {
 
   kapt rootProject.deps.autoValue
 
-  testCompile rootProject.deps.googleTestingCompile
-  testCompile files(getRuntimeJar())
-  testCompile files(Jvm.current().getToolsJar())
+  testImplementation rootProject.deps.googleTestingCompile
+  testImplementation files(getRuntimeJar())
+  testImplementation files(Jvm.current().getToolsJar())
 }
 
 static def getRuntimeJar() {
