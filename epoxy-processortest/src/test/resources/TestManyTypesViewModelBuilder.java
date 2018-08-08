@@ -45,7 +45,7 @@ public interface TestManyTypesViewModelBuilder {
 
   TestManyTypesViewModelBuilder listValue(@NonNull List<String> listValue);
 
-  TestManyTypesViewModelBuilder clickListener(final OnModelClickListener<TestManyTypesViewModel_, TestManyTypesView> clickListener);
+  TestManyTypesViewModelBuilder clickListener(@NonNull final OnModelClickListener<TestManyTypesViewModel_, TestManyTypesView> clickListener);
 
   TestManyTypesViewModelBuilder clickListener(@NonNull View.OnClickListener clickListener);
 
@@ -60,15 +60,15 @@ public interface TestManyTypesViewModelBuilder {
 
   TestManyTypesViewModelBuilder id(long id);
 
-  TestManyTypesViewModelBuilder id(@NonNull Number... arg0);
+  TestManyTypesViewModelBuilder id(@Nullable Number... arg0);
 
   TestManyTypesViewModelBuilder id(long id1, long id2);
 
-  TestManyTypesViewModelBuilder id(@NonNull CharSequence arg0);
+  TestManyTypesViewModelBuilder id(@Nullable CharSequence arg0);
 
-  TestManyTypesViewModelBuilder id(@NonNull CharSequence arg0, @NonNull CharSequence... arg1);
+  TestManyTypesViewModelBuilder id(@Nullable CharSequence arg0, @Nullable CharSequence... arg1);
 
-  TestManyTypesViewModelBuilder id(@NonNull CharSequence arg0, long arg1);
+  TestManyTypesViewModelBuilder id(@Nullable CharSequence arg0, long arg1);
 
   TestManyTypesViewModelBuilder layout(@LayoutRes int arg0);
 

@@ -56,6 +56,7 @@ class Utils {
   static final String EPOXY_CONTROLLER_TYPE = "com.airbnb.epoxy.EpoxyController";
   static final String VIEW_CLICK_LISTENER_TYPE = "android.view.View.OnClickListener";
   static final String VIEW_LONG_CLICK_LISTENER_TYPE = "android.view.View.OnLongClickListener";
+  static final String DRAWABLE_TYPE = "android.graphics.drawable.Drawable";
   static final String GENERATED_MODEL_INTERFACE = "com.airbnb.epoxy.GeneratedModel";
   static final String MODEL_CLICK_LISTENER_TYPE = "com.airbnb.epoxy.OnModelClickListener";
   static final String MODEL_LONG_CLICK_LISTENER_TYPE = "com.airbnb.epoxy.OnModelLongClickListener";
@@ -112,6 +113,30 @@ class Utils {
 
   static boolean isViewLongClickListenerType(TypeMirror type) {
     return isType(type, VIEW_LONG_CLICK_LISTENER_TYPE);
+  }
+
+  static boolean isBooleanType(TypeMirror type) {
+    return type.getKind() == TypeKind.BOOLEAN || Utils.isType(type, "java.lang.Boolean");
+  }
+
+  static boolean isDoubleType(TypeMirror type) {
+    return type.getKind() == TypeKind.DOUBLE || Utils.isType(type, "java.lang.Double");
+  }
+
+  static boolean isIntType(TypeMirror type) {
+    return type.getKind() == TypeKind.INT || Utils.isType(type, "java.lang.Integer");
+  }
+
+  static boolean isLongType(TypeMirror type) {
+    return type.getKind() == TypeKind.LONG || Utils.isType(type, "java.lang.Long");
+  }
+
+  static boolean isStringType(TypeMirror type) {
+    return Utils.isType(type, "java.lang.String");
+  }
+
+  static boolean isCharSequenceOrStringType(TypeMirror type) {
+    return Utils.isType(type, "java.lang.CharSequence") || isStringType(type);
   }
 
   static boolean isIterableType(TypeElement element) {
@@ -424,6 +449,14 @@ class Utils {
       }
     }
     return false;
+  }
+
+  static boolean isType(TypeMirror type, ClassName className) {
+    return isType(type, className.reflectionName());
+  }
+
+  static boolean isListOfType(TypeMirror typeMirror, String type) {
+    return isType(typeMirror, "java.util.List<" + type + ">");
   }
 
   @Nullable

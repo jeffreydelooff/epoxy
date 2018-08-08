@@ -2,7 +2,6 @@ package com.airbnb.epoxy;
 
 import android.view.ViewGroup;
 import androidx.annotation.LayoutRes;
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import java.lang.CharSequence;
 import java.lang.Number;
@@ -134,7 +133,7 @@ public class AutoLayoutModelViewModel_ extends EpoxyModel<AutoLayoutModelView> i
   }
 
   @Override
-  public AutoLayoutModelViewModel_ id(@NonNull Number... arg0) {
+  public AutoLayoutModelViewModel_ id(@Nullable Number... arg0) {
     super.id(arg0);
     return this;
   }
@@ -146,19 +145,19 @@ public class AutoLayoutModelViewModel_ extends EpoxyModel<AutoLayoutModelView> i
   }
 
   @Override
-  public AutoLayoutModelViewModel_ id(@NonNull CharSequence arg0) {
+  public AutoLayoutModelViewModel_ id(@Nullable CharSequence arg0) {
     super.id(arg0);
     return this;
   }
 
   @Override
-  public AutoLayoutModelViewModel_ id(@NonNull CharSequence arg0, @NonNull CharSequence... arg1) {
+  public AutoLayoutModelViewModel_ id(@Nullable CharSequence arg0, @Nullable CharSequence... arg1) {
     super.id(arg0, arg1);
     return this;
   }
 
   @Override
-  public AutoLayoutModelViewModel_ id(@NonNull CharSequence arg0, long arg1) {
+  public AutoLayoutModelViewModel_ id(@Nullable CharSequence arg0, long arg1) {
     super.id(arg0, arg1);
     return this;
   }

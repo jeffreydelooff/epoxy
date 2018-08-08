@@ -1,7 +1,6 @@
 package com.airbnb.epoxy;
 
 import androidx.annotation.LayoutRes;
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.ViewDataBinding;
 import java.lang.Boolean;
@@ -303,7 +302,7 @@ public class DataBindingModelWithAllFieldTypes_ extends DataBindingModelWithAllF
   }
 
   @Override
-  public DataBindingModelWithAllFieldTypes_ id(@NonNull Number... arg0) {
+  public DataBindingModelWithAllFieldTypes_ id(@Nullable Number... arg0) {
     super.id(arg0);
     return this;
   }
@@ -315,20 +314,20 @@ public class DataBindingModelWithAllFieldTypes_ extends DataBindingModelWithAllF
   }
 
   @Override
-  public DataBindingModelWithAllFieldTypes_ id(@NonNull CharSequence arg0) {
+  public DataBindingModelWithAllFieldTypes_ id(@Nullable CharSequence arg0) {
     super.id(arg0);
     return this;
   }
 
   @Override
-  public DataBindingModelWithAllFieldTypes_ id(@NonNull CharSequence arg0,
-      @NonNull CharSequence... arg1) {
+  public DataBindingModelWithAllFieldTypes_ id(@Nullable CharSequence arg0,
+      @Nullable CharSequence... arg1) {
     super.id(arg0, arg1);
     return this;
   }
 
   @Override
-  public DataBindingModelWithAllFieldTypes_ id(@NonNull CharSequence arg0, long arg1) {
+  public DataBindingModelWithAllFieldTypes_ id(@Nullable CharSequence arg0, long arg1) {
     super.id(arg0, arg1);
     return this;
   }

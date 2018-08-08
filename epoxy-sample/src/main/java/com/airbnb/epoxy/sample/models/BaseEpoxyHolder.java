@@ -1,10 +1,9 @@
 package com.airbnb.epoxy.sample.models;
 
 import android.view.View;
-
 import com.airbnb.epoxy.EpoxyHolder;
-
 import androidx.annotation.CallSuper;
+import androidx.annotation.NonNull;
 import butterknife.ButterKnife;
 
 /**
@@ -14,7 +13,7 @@ import butterknife.ButterKnife;
 public abstract class BaseEpoxyHolder extends EpoxyHolder {
   @CallSuper
   @Override
-  protected void bindView(View itemView) {
+  protected void bindView(@NonNull View itemView) {
     ButterKnife.bind(this, itemView);
   }
 }

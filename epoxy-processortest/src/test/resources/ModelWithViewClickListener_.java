@@ -2,7 +2,6 @@ package com.airbnb.epoxy;
 
 import android.view.View;
 import androidx.annotation.LayoutRes;
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import java.lang.CharSequence;
 import java.lang.Number;
@@ -104,7 +103,7 @@ public class ModelWithViewClickListener_ extends ModelWithViewClickListener impl
   }
 
   @Override
-  public ModelWithViewClickListener_ id(@NonNull Number... arg0) {
+  public ModelWithViewClickListener_ id(@Nullable Number... arg0) {
     super.id(arg0);
     return this;
   }
@@ -116,19 +115,20 @@ public class ModelWithViewClickListener_ extends ModelWithViewClickListener impl
   }
 
   @Override
-  public ModelWithViewClickListener_ id(@NonNull CharSequence arg0) {
+  public ModelWithViewClickListener_ id(@Nullable CharSequence arg0) {
     super.id(arg0);
     return this;
   }
 
   @Override
-  public ModelWithViewClickListener_ id(@NonNull CharSequence arg0, @NonNull CharSequence... arg1) {
+  public ModelWithViewClickListener_ id(@Nullable CharSequence arg0,
+      @Nullable CharSequence... arg1) {
     super.id(arg0, arg1);
     return this;
   }
 
   @Override
-  public ModelWithViewClickListener_ id(@NonNull CharSequence arg0, long arg1) {
+  public ModelWithViewClickListener_ id(@Nullable CharSequence arg0, long arg1) {
     super.id(arg0, arg1);
     return this;
   }

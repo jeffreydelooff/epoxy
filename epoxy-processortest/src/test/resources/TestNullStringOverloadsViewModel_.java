@@ -167,7 +167,7 @@ public class TestNullStringOverloadsViewModel_ extends EpoxyModel<TestNullString
   }
 
   @Override
-  public TestNullStringOverloadsViewModel_ id(@NonNull Number... arg0) {
+  public TestNullStringOverloadsViewModel_ id(@Nullable Number... arg0) {
     super.id(arg0);
     return this;
   }
@@ -179,20 +179,20 @@ public class TestNullStringOverloadsViewModel_ extends EpoxyModel<TestNullString
   }
 
   @Override
-  public TestNullStringOverloadsViewModel_ id(@NonNull CharSequence arg0) {
+  public TestNullStringOverloadsViewModel_ id(@Nullable CharSequence arg0) {
     super.id(arg0);
     return this;
   }
 
   @Override
-  public TestNullStringOverloadsViewModel_ id(@NonNull CharSequence arg0,
-      @NonNull CharSequence... arg1) {
+  public TestNullStringOverloadsViewModel_ id(@Nullable CharSequence arg0,
+      @Nullable CharSequence... arg1) {
     super.id(arg0, arg1);
     return this;
   }
 
   @Override
-  public TestNullStringOverloadsViewModel_ id(@NonNull CharSequence arg0, long arg1) {
+  public TestNullStringOverloadsViewModel_ id(@Nullable CharSequence arg0, long arg1) {
     super.id(arg0, arg1);
     return this;
   }

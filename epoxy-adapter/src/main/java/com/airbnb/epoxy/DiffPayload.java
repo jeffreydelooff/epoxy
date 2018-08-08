@@ -1,5 +1,10 @@
 package com.airbnb.epoxy;
 
+import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
+import androidx.collection.LongSparseArray;
+
+import java.util.Collections;
 import java.util.List;
 
 import androidx.annotation.Nullable;
@@ -34,6 +39,10 @@ public class DiffPayload {
         modelsById.put(model.id(), model);
       }
     }
+  }
+
+  public DiffPayload(EpoxyModel<?> changedItem) {
+    this(Collections.singletonList(changedItem));
   }
 
   /**

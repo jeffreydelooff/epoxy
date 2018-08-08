@@ -2,7 +2,6 @@ package com.airbnb.epoxy;
 
 import android.view.View;
 import androidx.annotation.LayoutRes;
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import java.lang.CharSequence;
 import java.lang.Number;
@@ -102,8 +101,7 @@ public class TestCallbackPropViewModel_ extends EpoxyModel<TestCallbackPropView>
 
   /**
    * Set a click listener that will provide the parent view, model, and adapter position of the clicked view. This will clear the normal View.OnClickListener if one has been set */
-  @Nullable
-  public TestCallbackPropViewModel_ listener(final OnModelClickListener<TestCallbackPropViewModel_, TestCallbackPropView> listener) {
+  public TestCallbackPropViewModel_ listener(@Nullable final OnModelClickListener<TestCallbackPropViewModel_, TestCallbackPropView> listener) {
     assignedAttributes_epoxyGeneratedModel.set(0);
     onMutation();
     if (listener == null) {
@@ -139,7 +137,7 @@ public class TestCallbackPropViewModel_ extends EpoxyModel<TestCallbackPropView>
   }
 
   @Override
-  public TestCallbackPropViewModel_ id(@NonNull Number... arg0) {
+  public TestCallbackPropViewModel_ id(@Nullable Number... arg0) {
     super.id(arg0);
     return this;
   }
@@ -151,19 +149,20 @@ public class TestCallbackPropViewModel_ extends EpoxyModel<TestCallbackPropView>
   }
 
   @Override
-  public TestCallbackPropViewModel_ id(@NonNull CharSequence arg0) {
+  public TestCallbackPropViewModel_ id(@Nullable CharSequence arg0) {
     super.id(arg0);
     return this;
   }
 
   @Override
-  public TestCallbackPropViewModel_ id(@NonNull CharSequence arg0, @NonNull CharSequence... arg1) {
+  public TestCallbackPropViewModel_ id(@Nullable CharSequence arg0,
+      @Nullable CharSequence... arg1) {
     super.id(arg0, arg1);
     return this;
   }
 
   @Override
-  public TestCallbackPropViewModel_ id(@NonNull CharSequence arg0, long arg1) {
+  public TestCallbackPropViewModel_ id(@Nullable CharSequence arg0, long arg1) {
     super.id(arg0, arg1);
     return this;
   }
