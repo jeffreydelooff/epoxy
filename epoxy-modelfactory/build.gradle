@@ -24,6 +24,8 @@ dependencies {
   implementation rootProject.deps.paris
 
   testImplementation project(':epoxy-adapter')
+  testImplementation project(':epoxy-annotations')
+  testImplementation rootProject.deps.androidRecyclerView
   // Need to include the processor directly since we create an instance of it in code for testing
   testImplementation project(':epoxy-processor')
   testImplementation project(':epoxy-processortest')
