@@ -26,7 +26,7 @@ dependencies {
     implementation rootProject.deps.androidRecyclerView
     implementation rootProject.deps.androidDesignLibrary
     implementation rootProject.deps.androidAppcompat
-    implementation project(':epoxy-annotations')
+    api project(':epoxy-annotations')
     api project(':epoxy-adapter')
 
     testImplementation rootProject.deps.junit
